@@ -11,7 +11,6 @@ export default {
         "primary-light": "#7F77DD",
         "primary-dark": "#3C3489",
         dark: "#0a0a1a",
-        "dark-card": "rgba(255,255,255,0.04)",
       },
     },
   },
