@@ -32,32 +32,38 @@ export default function Dashboard() {
     'exportee': 'Exporté',
   }
 
+  // Vérifie si le profil est vraiment rempli (on regarde les compétences et les expériences)
+  const isProfileEmpty = !user?.competences || user.competences.trim().length < 5 || !user?.experiences;
+
   return (
-    <div className="max-w-5xl mx-auto">
+    <div className="max-w-5xl mx-auto px-4 pb-10">
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-white">
           Bonjour, <span className="text-primary-light">{user?.prenom}</span>
         </h1>
         <p className="text-gray-400 mt-1 text-sm">Voici un aperçu de votre activité</p>
       </div>
-{!user?.competences && (
-  <div className="mb-6 bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-4 flex items-center justify-between">
-    <div className="flex items-center gap-3">
-      <span className="text-2xl">⚡</span>
-      <div>
-        <p className="text-yellow-500 font-medium text-sm">Votre profil est vide !</p>
-        <p className="text-gray-400 text-xs mt-0.5">Importez votre CV pour permettre à l'IA de personnaliser vos candidatures.</p>
-      </div>
-    </div>
-    <button 
-      onClick={() => navigate('/profil')}
-      className="text-xs bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-2 px-4 rounded-lg transition-colors"
-    >
-      Compléter mon profil
-    </button>
-  </div>
-)}
-      <div className="grid grid-cols-3 gap-4 mb-6">
+
+      {/* Bannière d'alerte dynamique */}
+      {isProfileEmpty && (
+        <div className="mb-6 bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-4 flex items-center justify-between animate-in fade-in duration-500">
+          <div className="flex items-center gap-3">
+            <span className="text-2xl text-yellow-500">⚡</span>
+            <div>
+              <p className="text-yellow-500 font-medium text-sm">Votre profil est incomplet</p>
+              <p className="text-gray-400 text-xs mt-0.5">Complétez votre profil pour que l'IA puisse générer des documents pertinents.</p>
+            </div>
+          </div>
+          <button 
+            onClick={() => navigate('/profil')}
+            className="text-xs bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-2 px-4 rounded-lg transition-colors whitespace-nowrap"
+          >
+            Compléter maintenant
+          </button>
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         {[
           { label: 'Candidatures créées', value: candidatures.length, sub: 'Total' },
           { label: 'Score moyen', value: `${scoreMoyen}%`, sub: 'Compatibilité IA' },
@@ -71,14 +77,14 @@ export default function Dashboard() {
         ))}
       </div>
 
-      <div className="bg-primary/10 border border-primary/25 rounded-xl p-5 flex items-center justify-between mb-6">
+      <div className="bg-primary/10 border border-primary/25 rounded-xl p-5 flex flex-col sm:flex-row items-center justify-between mb-6 gap-4">
         <div>
           <p className="text-white font-medium">Nouvelle candidature</p>
           <p className="text-gray-400 text-sm mt-1">Soumettez une offre, l'IA génère votre CV en 30 secondes</p>
         </div>
         <button
           onClick={() => navigate('/nouvelle-candidature')}
-          className="bg-primary hover:bg-primary-dark text-white px-5 py-2.5 rounded-xl text-sm font-medium transition-all whitespace-nowrap"
+          className="bg-primary hover:bg-primary-dark text-white px-5 py-2.5 rounded-xl text-sm font-medium transition-all whitespace-nowrap w-full sm:w-auto"
         >
           + Lancer la génération
         </button>
@@ -89,7 +95,7 @@ export default function Dashboard() {
         {loading ? (
           <div className="text-center text-gray-500 py-8">Chargement...</div>
         ) : candidatures.length === 0 ? (
-          <div className="text-center text-gray-500 py-8 bg-white/3 border border-white/8 rounded-xl">
+          <div className="text-center text-gray-500 py-8 bg-white/3 border border-white/8 rounded-xl text-sm italic">
             Aucune candidature pour l'instant
           </div>
         ) : (
@@ -112,4 +118,4 @@ export default function Dashboard() {
       </div>
     </div>
   )
-}
+}   

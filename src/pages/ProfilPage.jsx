@@ -1,7 +1,12 @@
 import { useState, useEffect, useRef } from 'react'
 import { profilAPI } from '../services/api'
+import { useNavigate } from 'react-router-dom' 
+import { useAuth } from '../context/AuthContext' // <--- Ajouté
 
 export default function ProfilPage() {
+  const navigate = useNavigate()
+  const { user, setUser } = useAuth() // <--- Récupération du contexte
+  
   const [profil, setProfil] = useState({
     titre_profil: '', 
     experiences: '', 
@@ -9,6 +14,7 @@ export default function ProfilPage() {
     competences: '', 
     langues: '',
   })
+  
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [isAnalyzing, setIsAnalyzing] = useState(false)
@@ -34,11 +40,11 @@ export default function ProfilPage() {
     setSuccess(null)
     try {
       const res = await profilAPI.importCV(formData)
-      // On met à jour l'état avec les données renvoyées par le backend
-      // Note: res.data.data doit correspondre à la structure de l'objet profil
+      // On met à jour l'état local avec les données renvoyées par le backend
+      const nouvellesDonnees = res.data.data
       setProfil(prev => ({
         ...prev,
-        ...res.data.data 
+        ...nouvellesDonnees 
       }))
       setSuccess("✨ L'IA a analysé votre CV et rempli le formulaire !")
     } catch (err) {
@@ -49,24 +55,38 @@ export default function ProfilPage() {
     }
   }
 
-  const handleSave = async (e) => {
-    e.preventDefault()
-    setSaving(true)
-    setSuccess(null)
-    try {
-      await profilAPI.update(profil)
-      setSuccess("✅ Profil sauvegardé avec succès !")
-      setTimeout(() => setSuccess(null), 3000)
-    } catch {
-        alert("Erreur lors de la sauvegarde")
-    } finally { 
-        setSaving(false) 
-    }
-  }
+ const handleSave = async (e) => {
+  e.preventDefault()
+  setSaving(true)
+  setSuccess(null)
+  try {
+    const res = await profilAPI.update(profil)
+    
+    // CORRECTIF ICI : 
+    // On utilise une fonction pour être sûr d'avoir l'état précédent (prev)
+    // On garde tout ce qu'il y avait avant (...prev) 
+    // et on ajoute les résultats du profil (...res.data)
+    setUser(prev => ({ 
+      ...prev, 
+      ...res.data 
+    })) 
 
+    // On met aussi à jour le localStorage en fusionnant
+    const currentUser = JSON.parse(localStorage.getItem('user') || '{}')
+    const updatedUser = { ...currentUser, ...res.data }
+    localStorage.setItem('user', JSON.stringify(updatedUser))
+
+    setSuccess("✅ Profil sauvegardé ! Redirection...")
+    setTimeout(() => navigate('/'), 2000)
+  } catch (err) {
+    console.error(err)
+    alert("Erreur lors de la sauvegarde")
+  } finally {
+    setSaving(false)
+  }
+}
   if (loading) return <div className="text-center text-gray-500 py-12">Chargement du profil...</div>
 
-  // Définition des champs pour le formulaire
   const fields = [
     { key: 'titre_profil', label: 'Titre professionnel', placeholder: 'Ex: Développeur Full Stack', type: 'input' },
     { key: 'formations', label: 'Formations', placeholder: 'Vos diplômes...', type: 'textarea' },
@@ -82,7 +102,6 @@ export default function ProfilPage() {
         <p className="text-gray-400 text-sm mt-1">Ces informations seront utilisées pour personnaliser vos candidatures</p>
       </div>
 
-      {/* ZONE D'IMPORT IA */}
       <div className="mb-8 p-6 bg-primary/10 border border-dashed border-primary/40 rounded-2xl text-center">
         <div className="text-2xl mb-2">✨</div>
         <h3 className="text-white font-medium text-sm">Remplissage automatique</h3>
@@ -91,6 +110,7 @@ export default function ProfilPage() {
         <input type="file" ref={fileInputRef} className="hidden" accept=".pdf" onChange={handleImportCV} />
         
         <button
+          type="button"
           onClick={() => fileInputRef.current.click()}
           disabled={isAnalyzing}
           className="bg-primary/20 hover:bg-primary/30 text-primary-light border border-primary/30 px-4 py-2 rounded-lg text-xs font-medium transition-all flex items-center gap-2 mx-auto"
@@ -105,7 +125,6 @@ export default function ProfilPage() {
         </div>
       )}
 
-      {/* FORMULAIRE RENDU DYNAMIQUEMENT */}
       <form onSubmit={handleSave} className="space-y-4">
         {fields.map(field => (
           <div key={field.key} className="bg-white/3 border border-white/8 rounded-xl p-4">
