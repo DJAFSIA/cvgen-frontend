@@ -1,79 +1,110 @@
-import { useState } from 'react'
-import { offreAPI } from '../services/api'
+import { Download, FileText, Loader2, Wand2 } from 'lucide-react';
+import { candidatureAPI } from '../services/api';
 
-export default function NouvelleCandidature() {
-  const [url, setUrl] = useState('')
-  const [contenu, setContenu] = useState('')
-  const [isExtracting, setIsExtracting] = useState(false)
-  const [step, setStep] = useState(1) // Pour gérer les étapes (1: Saisie, 2: Analyse)
+// ... à l'intérieur de ton composant ...
+const [isGenerating, setIsGenerating] = useState(false);
+const [candidatureFinale, setCandidatureFinale] = useState(null);
 
-  const handleExtraireOffre = async () => {
-    if (!url) return
-    setIsExtracting(true)
-    try {
-      const res = await offreAPI.extraire(url)
-      setContenu(res.data.contenu)
-    } catch (err) {
-      alert("L'extraction automatique a échoué. Le site est peut-être protégé. Veuillez copier le texte manuellement.")
-    } finally {
-      setIsExtracting(false)
-    }
+const handleGenererDocuments = async () => {
+  setIsGenerating(true);
+  try {
+    // Étape A : Créer la candidature en base
+    const resCreate = await candidatureAPI.create(analyseResult.id);
+    const candidatureId = resCreate.data.id;
+
+    // Étape B : Lancer la rédaction IA
+    const resGen = await candidatureAPI.generer(candidatureId);
+    
+    // On stocke les textes générés et l'ID pour l'affichage
+    setCandidatureFinale({
+      id: candidatureId,
+      cv: resGen.data.cv,
+      lettre: resGen.data.lettre
+    });
+  } catch (err) {
+    alert("Erreur lors de la génération des documents.");
+  } finally {
+    setIsGenerating(false);
   }
+};
 
-  return (
-    <div className="max-w-4xl mx-auto px-4 pb-10">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-white">Nouvelle candidature</h1>
-        <div className="flex items-center gap-4 mt-4">
-            <div className={`h-1 flex-1 rounded-full ${step >= 1 ? 'bg-primary' : 'bg-white/10'}`}></div>
-            <div className={`h-1 flex-1 rounded-full ${step >= 2 ? 'bg-primary' : 'bg-white/10'}`}></div>
-            <div className={`h-1 flex-1 rounded-full ${step >= 3 ? 'bg-primary' : 'bg-white/10'}`}></div>
+// Fonction pour télécharger le PDF
+const downloadPDF = async (type) => {
+  try {
+    const response = await candidatureAPI.exportPdf(candidatureFinale.id, type);
+    
+    // Création d'un lien temporaire pour le téléchargement
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `${type === 'cv' ? 'CV' : 'Lettre'}_Candidature.pdf`);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  } catch (err) {
+    alert("Erreur lors du téléchargement du PDF.");
+  }
+};
+
+// --- DANS TON RENDU JSX ---
+// Juste après le bloc du score et du conseil de l'IA :
+
+{!candidatureFinale ? (
+  <button 
+    onClick={handleGenererDocuments}
+    disabled={isGenerating || !analyseResult}
+    className="w-full mt-8 bg-primary hover:bg-primary-dark text-white py-4 rounded-xl font-bold flex items-center justify-center gap-3 transition-all shadow-lg shadow-primary/20"
+  >
+    {isGenerating ? (
+      <><Loader2 className="animate-spin" /> L'IA rédige vos documents...</>
+    ) : (
+      <><Wand2 size={20} /> Rédiger mon CV et ma Lettre personnalisés</>
+    )}
+  </button>
+) : (
+  <div className="mt-12 space-y-8 animate-in slide-in-from-bottom-8 duration-700">
+    <div className="flex items-center gap-3">
+        <div className="h-px flex-1 bg-white/10"></div>
+        <h2 className="text-xl font-bold text-white">Vos documents personnalisés</h2>
+        <div className="h-px flex-1 bg-white/10"></div>
+    </div>
+
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      {/* APERÇU CV */}
+      <div className="bg-white/5 border border-white/10 rounded-2xl p-6 flex flex-col">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-white font-medium flex items-center gap-2">
+            <FileText size={18} className="text-primary-light" /> Curriculum Vitae
+          </h3>
         </div>
+        <div className="flex-1 text-gray-400 text-[10px] leading-relaxed h-80 overflow-y-auto bg-black/30 p-4 rounded-xl border border-white/5 font-mono whitespace-pre-wrap mb-4">
+          {candidatureFinale.cv}
+        </div>
+        <button 
+          onClick={() => downloadPDF('cv')}
+          className="w-full bg-white text-black py-3 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-gray-200 transition-all"
+        >
+          <Download size={18} /> Télécharger le CV (PDF)
+        </button>
       </div>
 
-      <div className="bg-white/3 border border-white/8 rounded-2xl p-6">
-        <h2 className="text-white font-medium mb-4 italic">Étape 1 : Source de l'offre</h2>
-        
-        {/* CHAMP URL */}
-        <label className="text-xs text-gray-400 mb-2 block">Lien de l'offre (Optionnel mais recommandé)</label>
-        <div className="flex gap-2 mb-6">
-          <input 
-            type="text"
-            value={url}
-            onChange={(e) => setUrl(e.target.value)}
-            placeholder="https://www.linkedin.com/jobs/view/..."
-            className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-primary-light"
-          />
-          <button 
-            type="button"
-            onClick={handleExtraireOffre}
-            disabled={isExtracting}
-            className="bg-primary/20 hover:bg-primary/30 text-primary-light border border-primary/30 px-6 py-2 rounded-xl text-sm font-medium transition-all"
-          >
-            {isExtracting ? "Analyse..." : "Extraire"}
-          </button>
+      {/* APERÇU LETTRE */}
+      <div className="bg-white/5 border border-white/10 rounded-2xl p-6 flex flex-col">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-white font-medium flex items-center gap-2">
+            <FileText size={18} className="text-primary-light" /> Lettre de Motivation
+          </h3>
         </div>
-
-        {/* ZONE DE TEXTE */}
-        <label className="text-xs text-gray-400 mb-2 block">Description de l'offre *</label>
-        <textarea 
-          value={contenu}
-          onChange={(e) => setContenu(e.target.value)}
-          rows={12}
-          className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-primary-light resize-none"
-          placeholder="Le contenu de l'offre apparaîtra ici ou collez-le manuellement..."
-        />
-
-        <div className="mt-6 flex justify-end">
-          <button
-            onClick={() => setStep(2)}
-            disabled={!contenu || contenu.length < 50}
-            className="bg-primary hover:bg-primary-dark text-white px-8 py-3 rounded-xl font-medium transition-all disabled:opacity-50"
-          >
-            Analyser avec l'IA →
-          </button>
+        <div className="flex-1 text-gray-400 text-[10px] leading-relaxed h-80 overflow-y-auto bg-black/30 p-4 rounded-xl border border-white/5 font-mono whitespace-pre-wrap mb-4">
+          {candidatureFinale.lettre}
         </div>
+        <button 
+          onClick={() => downloadPDF('lettre')}
+          className="w-full bg-white text-black py-3 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-gray-200 transition-all"
+        >
+          <Download size={18} /> Télécharger la Lettre (PDF)
+        </button>
       </div>
     </div>
-  )
-}
+  </div>
+)}

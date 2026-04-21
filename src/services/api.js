@@ -40,7 +40,7 @@ export const profilAPI = {
 
 
 export const offreAPI = {
-  create: (data) => api.post('/offre/', data),
+  soumettre: (data) => api.post('/offre/', data), 
   list: () => api.get('/offre/'),
   get: (id) => api.get(`/offre/${id}`),
   extraire: (url) => api.post('/offre/extraire', { url }),
