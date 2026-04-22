@@ -47,10 +47,18 @@ export const offreAPI = {
 }
 
 export const candidatureAPI = {
-  create: (data) => api.post('/candidature/', data),
+  create: (offreId) => api.post('/candidature/', { offre_id: offreId }),
+  
+  generer: (id) => api.post(`/candidature/${id}/generer`, { 
+    modele_cv: 'classique', 
+    ton_lettre: 'professionnel' 
+  }),
+  
   list: () => api.get('/candidature/'),
-  generer: (id, data) => api.post(`/candidature/${id}/generer`, data),
-  exportPdf: (id, type) => api.get(`/candidature/${id}/export-pdf?type_doc=${type}`, { responseType: 'blob' }),
+  
+  exportPdf: (id, type) => api.get(`/candidature/${id}/export-pdf?type_doc=${type}`, { 
+    responseType: 'blob' 
+  }),
 }
 
 export default api
