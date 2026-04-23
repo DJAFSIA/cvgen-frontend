@@ -13,3 +13,27 @@ body {
   color: #ffffff;
   font-family: 'Inter', sans-serif;
 }
+/* Style pour forcer la visibilité du texte dans les aperçus */
+.markdown-cv, .markdown-letter {
+  color: #1e293b !important; /* Gris très foncé presque noir */
+  text-align: left;
+  line-height: 1.6;
+}
+
+/* On force aussi tous les éléments enfants (paragraphes, listes, titres) */
+.markdown-cv *, .markdown-letter * {
+  color: #1e293b !important;
+}
+
+.markdown-cv h1, .markdown-cv h2, .markdown-letter h1, .markdown-letter h2 {
+  color: #534ab7 !important; /* Titres en violet pour le style */
+  font-weight: bold;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.markdown-cv ul, .markdown-letter ul {
+  padding-left: 1.5rem;
+  list-style-type: disc;
+}

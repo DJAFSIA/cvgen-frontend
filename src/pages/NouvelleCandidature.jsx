@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { offreAPI, candidatureAPI } from '../services/api' // Ajout de candidatureAPI
+import { offreAPI, candidatureAPI } from '../services/api' 
+import ReactMarkdown from 'react-markdown'
 import { 
   CheckCircle2, 
   AlertCircle, 
@@ -191,39 +192,32 @@ export default function NouvelleCandidature() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* CV PREVIEW */}
-            <div className="bg-white/5 border border-white/10 rounded-2xl p-6 flex flex-col">
-              <h3 className="text-white font-medium mb-4 flex items-center gap-2">
-                <FileText size={18} className="text-primary-light" /> Curriculum Vitae
-              </h3>
-              <div className="flex-1 bg-black/30 p-4 rounded-xl border border-white/5 text-[10px] text-gray-400 font-mono h-80 overflow-y-auto whitespace-pre-wrap">
-                {candidatureFinale.cv}
-              </div>
-              <button 
-                onClick={() => downloadPDF('cv')}
-                className="w-full mt-4 bg-white text-black py-3 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-gray-200 transition-all"
-              >
-                <Download size={18} /> Télécharger le CV (PDF)
-              </button>
-            </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+  <div className="bg-white p-10 rounded-sm shadow-2xl overflow-y-auto max-h-[700px] border-t-4 border-primary">
+  <div className="markdown-cv"> {/* La classe est ici maintenant */}
+    <ReactMarkdown>{candidatureFinale.cv}</ReactMarkdown>
+  </div>
+</div>
 
-            {/* LETTRE PREVIEW */}
-            <div className="bg-white/5 border border-white/10 rounded-2xl p-6 flex flex-col">
-              <h3 className="text-white font-medium mb-4 flex items-center gap-2">
-                <FileText size={18} className="text-primary-light" /> Lettre de Motivation
-              </h3>
-              <div className="flex-1 bg-black/30 p-4 rounded-xl border border-white/5 text-[10px] text-gray-400 font-mono h-80 overflow-y-auto whitespace-pre-wrap">
-                {candidatureFinale.lettre}
-              </div>
-              <button 
-                onClick={() => downloadPDF('lettre')}
-                className="w-full mt-4 bg-white text-black py-3 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-gray-200 transition-all"
-              >
-                <Download size={18} /> Télécharger la Lettre (PDF)
-              </button>
-            </div>
-          </div>
+  {/* Colonne de droite : Lettre */}
+  <div className="bg-white p-10 rounded-sm shadow-2xl overflow-y-auto max-h-[700px] border-t-4 border-primary">
+  <div className="markdown-letter"> {/* La classe est ici maintenant */}
+    <ReactMarkdown>{candidatureFinale.lettre}</ReactMarkdown>
+  </div>
+</div>
+<button 
+  onClick={() => downloadPDF('cv')}
+  className="w-full mt-4 bg-primary text-white py-2 rounded-lg font-bold hover:bg-primary-dark transition-all flex items-center justify-center gap-2"
+>
+  <Download size={16} /> Télécharger mon CV optimisé (PDF)
+</button>
+<button 
+  onClick={() => downloadPDF('lettre')}
+  className="w-full mt-4 bg-primary text-white py-2 rounded-lg font-bold hover:bg-primary-dark transition-all flex items-center justify-center gap-2"
+>
+  <Download size={16} /> Télécharger ma Lettre de motivation (PDF)
+</button>
+</div>  
         </div>
       )}
     </div>
