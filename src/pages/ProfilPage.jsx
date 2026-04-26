@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { profilAPI } from '../services/api'
 import { useNavigate } from 'react-router-dom' 
-import { useAuth } from '../context/AuthContext' // <--- Ajouté
+import { useAuth } from '../context/AuthContext' 
 
 export default function ProfilPage() {
   const navigate = useNavigate()
@@ -30,30 +30,53 @@ export default function ProfilPage() {
   }, [])
 
   const handleImportCV = async (e) => {
-    const file = e.target.files[0]
-    if (!file) return
+  const file = e.target.files[0];
+  if (!file) return;
 
-    const formData = new FormData()
-    formData.append('file', file)
+  const formData = new FormData();
+  formData.append('file', file);
 
-    setIsAnalyzing(true)
-    setSuccess(null)
-    try {
-      const res = await profilAPI.importCV(formData)
-      // On met à jour l'état local avec les données renvoyées par le backend
-      const nouvellesDonnees = res.data.data
-      setProfil(prev => ({
-        ...prev,
-        ...nouvellesDonnees 
-      }))
-      setSuccess("✨ L'IA a analysé votre CV et rempli le formulaire !")
-    } catch (err) {
-      alert("Erreur lors de l'analyse du CV")
-    } finally {
-      setIsAnalyzing(false)
-      e.target.value = null
-    }
+  setIsAnalyzing(true);
+  try {
+    const res = await profilAPI.importCV(formData);
+    const d = res.data.data;
+
+    // FONCTION POUR TRANSFORMER LES OBJETS EN TEXTE LISIBLE
+    const formatExperiences = (exps) => {
+      if (!Array.isArray(exps)) return exps;
+      return exps.map(exp => 
+        `- ${exp.poste} @ ${exp.entreprise} (${exp.date})\n  Lieu: ${exp.lieu}\n  ${exp.description}`
+      ).join('\n\n');
+    };
+
+    const formatFormations = (forms) => {
+      if (!Array.isArray(forms)) return forms;
+      return forms.map(f => 
+        `- ${f.diplome} @ ${f.etablissement} (${f.date})\n  Lieu: ${f.lieu}`
+      ).join('\n\n');
+    };
+
+    // On met à jour le profil avec du texte et non des objets
+    setProfil({
+      ...profil,
+      nom_complet_cv: d.nom_complet_cv,
+      email_cv: d.email_cv,
+      telephone: d.telephone,
+      adresse: d.adresse,
+      titre_profil: d.titre_profil,
+      experiences: formatExperiences(d.experiences), // Transformé en String
+      formations: formatFormations(d.formations),   // Transformé en String
+      competences: d.competences,
+      langues: d.langues
+    });
+
+    setSuccess("✨ CV analysé et formulaires remplis !");
+  } catch (err) {
+    alert("Erreur lors de l'analyse");
+  } finally {
+    setIsAnalyzing(false);
   }
+};
 
  const handleSave = async (e) => {
   e.preventDefault()
@@ -62,10 +85,7 @@ export default function ProfilPage() {
   try {
     const res = await profilAPI.update(profil)
     
-    // CORRECTIF ICI : 
-    // On utilise une fonction pour être sûr d'avoir l'état précédent (prev)
-    // On garde tout ce qu'il y avait avant (...prev) 
-    // et on ajoute les résultats du profil (...res.data)
+   
     setUser(prev => ({ 
       ...prev, 
       ...res.data 
