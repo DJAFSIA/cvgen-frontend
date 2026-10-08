@@ -44,14 +44,16 @@ export const offreAPI = {
   list: () => api.get('/offre/'),
   get: (id) => api.get(`/offre/${id}`),
   extraire: (url) => api.post('/offre/extraire', { url }),
+  questionsAlignement: (id) => api.post(`/offre/${id}/questions-alignement`),
 }
 
 export const candidatureAPI = {
   create: (offreId) => api.post('/candidature/', { offre_id: offreId }),
   
-  generer: (id) => api.post(`/candidature/${id}/generer`, { 
+  generer: (id, reponsesAlignement = []) => api.post(`/candidature/${id}/generer`, { 
     modele_cv: 'classique', 
-    ton_lettre: 'professionnel' 
+    ton_lettre: 'professionnel',
+    reponses_alignement: reponsesAlignement,
   }),
   
   list: () => api.get('/candidature/'),
