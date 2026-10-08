@@ -39,8 +39,7 @@ export default function ProfilPage() {
       setProfil(profilVersFormulaire(res.data.data))
       setFeedback({ tone: 'success', text: t('profile.imported') })
     } catch (err) {
-      const detail = err.response?.status && err.response.status < 500 ? errorMessage(err, t) : t('profile.importError')
-      setFeedback({ tone: 'error', text: detail })
+      setFeedback({ tone: 'error', text: errorMessage(err, t, 'profile.importError') })
     } finally {
       setImporting(false)
     }
