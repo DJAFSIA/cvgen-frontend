@@ -1,7 +1,10 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from './context/AuthContext'
+import { I18nProvider, useI18n } from './i18n'
 import Layout from './components/Layout'
-import LoginPage from './pages/LoginPage'
+import { Spinner } from './components/ui'
+import LandingPage from './pages/LandingPage'
+import AuthPage from './pages/AuthPage'
 import Dashboard from './pages/Dashboard'
 import ProfilPage from './pages/ProfilPage'
 import NouvelleCandidature from './pages/NouvelleCandidature'
@@ -9,21 +12,28 @@ import HistoriquePage from './pages/HistoriquePage'
 
 function PrivateRoute({ children }) {
   const { user, loading } = useAuth()
-  if (loading) return <div className="min-h-screen bg-dark flex items-center justify-center text-gray-400">Chargement...</div>
-  if (!user) return <Navigate to="/login" />
+  const { t } = useI18n()
+  if (loading) return <div className="min-h-screen"><Spinner label={t('common.loading')} /></div>
+  if (!user) return <Navigate to="/login" replace />
   return <Layout>{children}</Layout>
 }
 
-function AppRoutes() {
+function GuestRoute({ children }) {
   const { user } = useAuth()
+  return user ? <Navigate to="/dashboard" replace /> : children
+}
+
+function AppRoutes() {
   return (
     <Routes>
-      <Route path="/login" element={user ? <Navigate to="/dashboard" /> : <LoginPage />} />
+      <Route path="/" element={<LandingPage />} />
+      <Route path="/login" element={<GuestRoute><AuthPage mode="login" /></GuestRoute>} />
+      <Route path="/signup" element={<GuestRoute><AuthPage mode="signup" /></GuestRoute>} />
       <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
       <Route path="/profil" element={<PrivateRoute><ProfilPage /></PrivateRoute>} />
       <Route path="/nouvelle-candidature" element={<PrivateRoute><NouvelleCandidature /></PrivateRoute>} />
       <Route path="/historique" element={<PrivateRoute><HistoriquePage /></PrivateRoute>} />
-      <Route path="*" element={<Navigate to="/login" />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   )
 }
@@ -31,9 +41,11 @@ function AppRoutes() {
 export default function App() {
   return (
     <BrowserRouter>
-      <AuthProvider>
-        <AppRoutes />
-      </AuthProvider>
+      <I18nProvider>
+        <AuthProvider>
+          <AppRoutes />
+        </AuthProvider>
+      </I18nProvider>
     </BrowserRouter>
   )
 }

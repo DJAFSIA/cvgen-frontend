@@ -1,121 +1,99 @@
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
+import { ArrowRight } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
-import { candidatureAPI } from '../services/api'
+import { useI18n } from '../i18n'
+import { candidatureAPI, profilAPI } from '../services/api'
+import { Alert, Button, Card, Spinner } from '../components/ui'
+import StatusBadge, { ScoreBar } from '../components/StatusBadge'
 
 export default function Dashboard() {
   const { user } = useAuth()
-  const navigate = useNavigate()
+  const { t, lang } = useI18n()
   const [candidatures, setCandidatures] = useState([])
+  const [profilVide, setProfilVide] = useState(false)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    candidatureAPI.list()
-      .then(res => setCandidatures(res.data))
-      .catch(() => {})
-      .finally(() => setLoading(false))
+    Promise.allSettled([candidatureAPI.list(), profilAPI.get()]).then(([cands, profil]) => {
+      if (cands.status === 'fulfilled') setCandidatures(cands.value.data)
+      if (profil.status === 'fulfilled') {
+        const p = profil.value.data
+        setProfilVide(!p.experiences || !(p.competences || '').trim())
+      }
+      setLoading(false)
+    })
   }, [])
 
   const scoreMoyen = candidatures.length
     ? Math.round(candidatures.reduce((acc, c) => acc + (c.score_compatibilite || 0), 0) / candidatures.length)
     : 0
 
-  const statusColor = {
-    'en_cours': 'bg-primary/20 text-primary-light border-primary/30',
-    'generee': 'bg-green-500/20 text-green-400 border-green-500/30',
-    'exportee': 'bg-teal-500/20 text-teal-400 border-teal-500/30',
-  }
-
-  const statusLabel = {
-    'en_cours': 'En cours',
-    'generee': 'Généré',
-    'exportee': 'Exporté',
-  }
-
-  // Vérifie si le profil est vraiment rempli (on regarde les compétences et les expériences)
-  const isProfileEmpty = !user?.competences || user.competences.trim().length < 5 || !user?.experiences;
+  const stats = [
+    { label: t('dashboard.applications'), value: candidatures.length },
+    { label: t('dashboard.avgScore'), value: `${scoreMoyen}%` },
+    { label: t('dashboard.generated'), value: candidatures.filter((c) => c.statut === 'generee').length },
+  ]
 
   return (
-    <div className="max-w-5xl mx-auto px-4 pb-10">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-white">
-          Bonjour, <span className="text-primary-light">{user?.prenom}</span>
-        </h1>
-        <p className="text-gray-400 mt-1 text-sm">Voici un aperçu de votre activité</p>
-      </div>
+    <div className="max-w-5xl mx-auto fade-up">
+      <h1 className="text-2xl font-bold">{t('dashboard.hello')}, {user?.prenom}</h1>
+      <p className="mt-1 text-body">{t('dashboard.overview')}</p>
 
-      {/* Bannière d'alerte dynamique */}
-      {isProfileEmpty && (
-        <div className="mb-6 bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-4 flex items-center justify-between animate-in fade-in duration-500">
-          <div className="flex items-center gap-3">
-            <span className="text-2xl text-yellow-500">⚡</span>
-            <div>
-              <p className="text-yellow-500 font-medium text-sm">Votre profil est incomplet</p>
-              <p className="text-gray-400 text-xs mt-0.5">Complétez votre profil pour que l'IA puisse générer des documents pertinents.</p>
-            </div>
-          </div>
-          <button 
-            onClick={() => navigate('/profil')}
-            className="text-xs bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-2 px-4 rounded-lg transition-colors whitespace-nowrap"
+      {!loading && profilVide && (
+        <div className="mt-6">
+          <Alert
+            tone="warn"
+            title={t('dashboard.incompleteTitle')}
+            action={<Link to="/profil"><Button size="sm" variant="secondary">{t('dashboard.completeNow')}</Button></Link>}
           >
-            Compléter maintenant
-          </button>
+            {t('dashboard.incompleteText')}
+          </Alert>
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        {[
-          { label: 'Candidatures créées', value: candidatures.length, sub: 'Total' },
-          { label: 'Score moyen', value: `${scoreMoyen}%`, sub: 'Compatibilité IA' },
-          { label: 'Générées', value: candidatures.filter(c => c.statut === 'generee').length, sub: 'Documents prêts' },
-        ].map((stat, i) => (
-          <div key={i} className="bg-white/4 border border-white/8 rounded-xl p-4">
-            <p className="text-xs text-gray-400 mb-2">{stat.label}</p>
-            <p className="text-3xl font-bold text-white">{stat.value}</p>
-            <p className="text-xs text-gray-500 mt-1">{stat.sub}</p>
-          </div>
+      <div className="mt-6 grid sm:grid-cols-3 gap-4">
+        {stats.map((stat) => (
+          <Card key={stat.label} className="p-5">
+            <p className="text-sm text-muted">{stat.label}</p>
+            <p className="mt-2 text-3xl font-bold text-ink tabular-nums">{stat.value}</p>
+          </Card>
         ))}
       </div>
 
-      <div className="bg-primary/10 border border-primary/25 rounded-xl p-5 flex flex-col sm:flex-row items-center justify-between mb-6 gap-4">
+      <Card className="mt-6 p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-gradient-to-r from-brand-soft to-white">
         <div>
-          <p className="text-white font-medium">Nouvelle candidature</p>
-          <p className="text-gray-400 text-sm mt-1">Soumettez une offre, l'IA génère votre CV en 30 secondes</p>
+          <h2 className="text-lg font-semibold">{t('dashboard.ctaTitle')}</h2>
+          <p className="mt-1 text-sm text-body">{t('dashboard.ctaText')}</p>
         </div>
-        <button
-          onClick={() => navigate('/nouvelle-candidature')}
-          className="bg-primary hover:bg-primary-dark text-white px-5 py-2.5 rounded-xl text-sm font-medium transition-all whitespace-nowrap w-full sm:w-auto"
-        >
-          + Lancer la génération
-        </button>
-      </div>
+        <Link to="/nouvelle-candidature">
+          <Button size="lg">{t('dashboard.ctaButton')} <ArrowRight size={16} aria-hidden="true" /></Button>
+        </Link>
+      </Card>
 
-      <div>
-        <h2 className="text-sm font-medium text-gray-400 mb-3">Candidatures récentes</h2>
-        {loading ? (
-          <div className="text-center text-gray-500 py-8">Chargement...</div>
-        ) : candidatures.length === 0 ? (
-          <div className="text-center text-gray-500 py-8 bg-white/3 border border-white/8 rounded-xl text-sm italic">
-            Aucune candidature pour l'instant
-          </div>
-        ) : (
-          <div className="flex flex-col gap-3">
-            {candidatures.slice(0, 5).map(c => (
-              <div key={c.id} className="bg-white/3 border border-white/8 rounded-xl px-4 py-3 flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-white">Candidature #{c.id.slice(0, 8)}</p>
-                  <p className="text-xs text-gray-500 mt-0.5">
-                    {new Date(c.date_creation).toLocaleDateString('fr-FR')} · Score {c.score_compatibilite || 0}%
-                  </p>
-                </div>
-                <span className={`text-xs px-3 py-1 rounded-full border ${statusColor[c.statut] || statusColor['en_cours']}`}>
-                  {statusLabel[c.statut] || 'En cours'}
-                </span>
+      <h2 className="mt-10 mb-3 text-sm font-semibold text-ink">{t('dashboard.recent')}</h2>
+      {loading ? (
+        <Spinner label={t('common.loading')} />
+      ) : candidatures.length === 0 ? (
+        <Card className="p-8 text-center text-sm text-muted">{t('dashboard.empty')}</Card>
+      ) : (
+        <Card className="divide-y divide-line">
+          {candidatures.slice(0, 5).map((c) => (
+            <div key={c.id} className="px-5 py-4 flex flex-wrap items-center justify-between gap-3">
+              <div className="min-w-0">
+                <p className="text-sm font-semibold text-ink truncate">{c.titre_poste || t('dashboard.untitled')}</p>
+                <p className="text-xs text-muted mt-0.5 truncate">
+                  {[c.entreprise, new Date(c.date_creation).toLocaleDateString(lang)].filter(Boolean).join(' · ')}
+                </p>
               </div>
-            ))}
-          </div>
-        )}
-      </div>
+              <div className="flex items-center gap-4">
+                <ScoreBar score={c.score_compatibilite} />
+                <StatusBadge statut={c.statut} />
+              </div>
+            </div>
+          ))}
+        </Card>
+      )}
     </div>
   )
-}   
+}

@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const api = axios.create({
-  baseURL: 'http://localhost:8000',
+  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8000',
   headers: { 'Content-Type': 'application/json' },
 })
 
@@ -11,10 +11,14 @@ api.interceptors.request.use((config) => {
   return config
 })
 
+const AUTH_ENDPOINTS = ['/auth/login', '/auth/inscription']
+
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
+    const url = error.config?.url || ''
+    // Un 401 sur login/inscription est une erreur de saisie, pas une session expiree
+    if (error.response?.status === 401 && !AUTH_ENDPOINTS.some((p) => url.includes(p))) {
       localStorage.removeItem('token')
       localStorage.removeItem('user')
       window.location.href = '/login'
@@ -22,6 +26,19 @@ api.interceptors.response.use(
     return Promise.reject(error)
   }
 )
+
+/**
+ * Message affichable pour une erreur axios : detail du serveur si c'est un texte,
+ * sinon message generique traduit (t = fonction de traduction).
+ */
+export function errorMessage(error, t, fallbackKey = 'common.error') {
+  if (!error.response) return t('common.network')
+  const { status, data } = error.response
+  if (status === 429) return t('common.tooMany')
+  // 502 = service d'IA indisponible : le serveur fournit un message dedie
+  if (typeof data?.detail === 'string' && (status < 500 || status === 502)) return data.detail
+  return t(fallbackKey)
+}
 
 export const authAPI = {
   inscription: (data) => api.post('/auth/inscription', data),
@@ -32,15 +49,13 @@ export const authAPI = {
 export const profilAPI = {
   get: () => api.get('/profil/'),
   update: (data) => api.put('/profil/', data),
-  //Import de CV avec multipart/form-data
   importCV: (formData) => api.post('/profil/import-cv', formData, {
-    headers: { 'Content-Type': 'multipart/form-data' }
+    headers: { 'Content-Type': 'multipart/form-data' },
   }),
 }
 
-
 export const offreAPI = {
-  soumettre: (data) => api.post('/offre/', data), 
+  soumettre: (data) => api.post('/offre/', data),
   list: () => api.get('/offre/'),
   get: (id) => api.get(`/offre/${id}`),
   extraire: (url) => api.post('/offre/extraire', { url }),
@@ -49,18 +64,18 @@ export const offreAPI = {
 
 export const candidatureAPI = {
   create: (offreId) => api.post('/candidature/', { offre_id: offreId }),
-  
-  generer: (id, reponsesAlignement = []) => api.post(`/candidature/${id}/generer`, { 
-    modele_cv: 'classique', 
-    ton_lettre: 'professionnel',
-    reponses_alignement: reponsesAlignement,
-  }),
-  
+  generer: (id, reponsesAlignement = [], modeleCv = 'classique') =>
+    api.post(`/candidature/${id}/generer`, {
+      modele_cv: modeleCv,
+      ton_lettre: 'professionnel',
+      reponses_alignement: reponsesAlignement,
+    }),
   list: () => api.get('/candidature/'),
-  
-  exportPdf: (id, type) => api.get(`/candidature/${id}/export-pdf?type_doc=${type}`, { 
-    responseType: 'blob' 
-  }),
+  exportPdf: (id, type, modele) =>
+    api.get(`/candidature/${id}/export-pdf`, {
+      params: { type_doc: type, ...(modele ? { modele } : {}) },
+      responseType: 'blob',
+    }),
 }
 
 export default api
