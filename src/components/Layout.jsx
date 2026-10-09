@@ -1,8 +1,11 @@
+import { useEffect, useState } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { FilePlus2, History, LayoutDashboard, LogOut, UserRound } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { useI18n } from '../i18n'
+import { authAPI, errorMessage } from '../services/api'
 import { Logo, LangSwitch } from './Brand'
+import { Alert, Button } from './ui'
 
 const navItems = [
   { path: '/dashboard', key: 'nav.dashboard', Icon: LayoutDashboard },
@@ -12,9 +15,28 @@ const navItems = [
 ]
 
 export default function Layout({ children }) {
-  const { user, logout } = useAuth()
+  const { user, logout, refreshUser } = useAuth()
   const { t } = useI18n()
   const navigate = useNavigate()
+  const [resend, setResend] = useState({ status: 'idle', error: '' }) // idle | sending | sent | error
+  const nonVerifie = user && user.email_verifie === false
+
+  // Au chargement : si le compte est marque non confirme, on verifie aupres de l'API
+  // (l'email a pu etre confirme depuis un autre onglet ou appareil).
+  useEffect(() => {
+    if (nonVerifie) refreshUser().catch(() => {})
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const renvoyer = async () => {
+    setResend({ status: 'sending', error: '' })
+    try {
+      await authAPI.resendVerification()
+      setResend({ status: 'sent', error: '' })
+    } catch (err) {
+      setResend({ status: 'error', error: errorMessage(err, t) })
+    }
+  }
 
   const handleLogout = () => {
     logout()
@@ -64,7 +86,26 @@ export default function Layout({ children }) {
             return <NavLink key={item.path} to={item.path} className={linkClass}><Icon size={17} aria-hidden="true" />{t(item.key)}</NavLink>
           })}
         </aside>
-        <main className="flex-1 min-w-0 p-5 sm:p-8">{children}</main>
+        <main className="flex-1 min-w-0 p-5 sm:p-8">
+          {nonVerifie && (
+            <div className="max-w-5xl mx-auto mb-6">
+              <Alert
+                tone="warn"
+                title={t('account.unverifiedTitle')}
+                action={
+                  resend.status === 'sent' ? null : (
+                    <Button size="sm" variant="secondary" loading={resend.status === 'sending'} onClick={renvoyer}>
+                      {t('account.resend')}
+                    </Button>
+                  )
+                }
+              >
+                {resend.status === 'sent' ? t('account.resent') : resend.status === 'error' ? resend.error : t('account.unverifiedText', { email: user.email })}
+              </Alert>
+            </div>
+          )}
+          {children}
+        </main>
       </div>
     </div>
   )

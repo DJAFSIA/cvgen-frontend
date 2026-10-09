@@ -34,9 +34,16 @@ api.interceptors.response.use(
 export function errorMessage(error, t, fallbackKey = 'common.error') {
   if (!error.response) return t('common.network')
   const { status, data } = error.response
+  const detail = data?.detail
+  // Le serveur renvoie {code, message} : on traduit le code, le message sert de secours
+  if (detail && typeof detail === 'object' && detail.code) {
+    const key = `errors.${detail.code}`
+    const translated = t(key)
+    if (translated !== key) return translated
+    if (typeof detail.message === 'string' && status < 500) return detail.message
+  }
   if (status === 429) return t('common.tooMany')
-  // 502 = service d'IA indisponible : le serveur fournit un message dedie
-  if (typeof data?.detail === 'string' && (status < 500 || status === 502)) return data.detail
+  if (typeof detail === 'string' && status < 500) return detail
   return t(fallbackKey)
 }
 
@@ -44,6 +51,11 @@ export const authAPI = {
   inscription: (data) => api.post('/auth/inscription', data),
   login: (data) => api.post('/auth/login', data),
   me: () => api.get('/auth/me'),
+  verifyEmail: (data) => api.post('/auth/verify-email', data),
+  resendVerification: () => api.post('/auth/resend-verification'),
+  forgot: (data) => api.post('/auth/forgot-password', data),
+  reset: (data) => api.post('/auth/reset-password', data),
+  google: (data) => api.post('/auth/google', data),
 }
 
 export const profilAPI = {

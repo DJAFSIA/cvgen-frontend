@@ -9,6 +9,9 @@ import Dashboard from './pages/Dashboard'
 import ProfilPage from './pages/ProfilPage'
 import NouvelleCandidature from './pages/NouvelleCandidature'
 import HistoriquePage from './pages/HistoriquePage'
+import ForgotPasswordPage from './pages/ForgotPasswordPage'
+import ResetPasswordPage from './pages/ResetPasswordPage'
+import VerifyEmailPage from './pages/VerifyEmailPage'
 
 function PrivateRoute({ children }) {
   const { user, loading } = useAuth()
@@ -29,6 +32,9 @@ function AppRoutes() {
       <Route path="/" element={<LandingPage />} />
       <Route path="/login" element={<GuestRoute><AuthPage mode="login" /></GuestRoute>} />
       <Route path="/signup" element={<GuestRoute><AuthPage mode="signup" /></GuestRoute>} />
+      <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+      <Route path="/reset-password" element={<ResetPasswordPage />} />
+      <Route path="/verify-email" element={<VerifyEmailPage />} />
       <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
       <Route path="/profil" element={<PrivateRoute><ProfilPage /></PrivateRoute>} />
       <Route path="/nouvelle-candidature" element={<PrivateRoute><NouvelleCandidature /></PrivateRoute>} />
