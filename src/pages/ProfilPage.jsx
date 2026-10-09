@@ -4,6 +4,7 @@ import { profilAPI, errorMessage } from '../services/api'
 import { FIELDS, profilVersFormulaire } from '../services/profile'
 import { useI18n } from '../i18n'
 import { Alert, Button, Card, Field, Input, Spinner, Textarea } from '../components/ui'
+import ErrorAlert from '../components/ErrorAlert'
 
 export default function ProfilPage() {
   const { t } = useI18n()
@@ -77,7 +78,7 @@ export default function ProfilPage() {
         </Button>
       </Card>
 
-      {feedback && <div className="mt-5"><Alert tone={feedback.tone}>{feedback.text}</Alert></div>}
+      {feedback && <div className="mt-5">{feedback.tone === 'error' ? <ErrorAlert message={feedback.text} /> : <Alert tone={feedback.tone}>{feedback.text}</Alert>}</div>}
 
       <form onSubmit={handleSave} className="mt-6 space-y-5">
         <Card className="p-6">

@@ -47,6 +47,22 @@ export function errorMessage(error, t, fallbackKey = 'common.error') {
   return t(fallbackKey)
 }
 
+/** Code d'erreur stable renvoye par l'API ({detail: {code}}), ou null. */
+export function errorCode(error) {
+  const detail = error?.response?.data?.detail
+  return detail && typeof detail === 'object' ? detail.code || null : null
+}
+
+export const billingAPI = {
+  plans: () => api.get('/billing/plans'),
+  me: () => api.get('/billing/me'),
+  stripeCheckout: (devise) => api.post('/billing/stripe/checkout', { devise }),
+  stripeConfirm: (sessionId) => api.post('/billing/stripe/confirm', { session_id: sessionId }),
+  stripePortal: () => api.post('/billing/stripe/portal'),
+  momoCheckout: (devise) => api.post('/billing/momo/checkout', { devise }),
+  momoConfirm: (transactionId) => api.post('/billing/momo/confirm', { transaction_id: String(transactionId) }),
+}
+
 export const authAPI = {
   inscription: (data) => api.post('/auth/inscription', data),
   login: (data) => api.post('/auth/login', data),

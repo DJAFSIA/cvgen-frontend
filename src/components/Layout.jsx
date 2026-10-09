@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
-import { FilePlus2, History, LayoutDashboard, LogOut, UserRound } from 'lucide-react'
+import { CreditCard, FilePlus2, History, LayoutDashboard, LogOut, UserRound } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { useI18n } from '../i18n'
 import { authAPI, errorMessage } from '../services/api'
@@ -12,6 +12,7 @@ const navItems = [
   { path: '/nouvelle-candidature', key: 'nav.newApplication', Icon: FilePlus2 },
   { path: '/historique', key: 'nav.history', Icon: History },
   { path: '/profil', key: 'nav.profile', Icon: UserRound },
+  { path: '/abonnement', key: 'nav.billing', Icon: CreditCard },
 ]
 
 export default function Layout({ children }) {

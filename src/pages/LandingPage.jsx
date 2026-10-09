@@ -2,7 +2,11 @@ import { Link } from 'react-router-dom'
 import {
   ArrowRight, BadgeCheck, FileDown, Gauge, Languages, LayoutTemplate, MessageSquareText, ShieldCheck,
 } from 'lucide-react'
+import { useEffect, useState } from 'react'
 import { useI18n } from '../i18n'
+import { billingAPI } from '../services/api'
+import { deviseCarteParDefaut } from '../services/money'
+import PricingCards from '../components/PricingCards'
 import { useAuth } from '../context/AuthContext'
 import { Logo, LangSwitch, Ribbon } from '../components/Brand'
 import { Button } from '../components/ui'
@@ -14,6 +18,11 @@ export default function LandingPage() {
   const { t } = useI18n()
   const { user } = useAuth()
   const steps = t('landing.steps')
+  const [offre, setOffre] = useState(null)
+
+  useEffect(() => {
+    billingAPI.plans().then((res) => setOffre(res.data)).catch(() => { /* section masquee si l'API ne repond pas */ })
+  }, [])
   const features = t('landing.features')
 
   return (
@@ -26,6 +35,7 @@ export default function LandingPage() {
               <a href="#how" className="hover:text-ink">{t('nav.howItWorks')}</a>
               <a href="#features" className="hover:text-ink">{t('nav.features')}</a>
               <a href="#templates" className="hover:text-ink">{t('nav.templates')}</a>
+              <a href="#pricing" className="hover:text-ink">{t('nav.pricing')}</a>
             </nav>
           </div>
           <div className="flex items-center gap-2">
@@ -116,6 +126,23 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
+
+      {offre && (
+        <section id="pricing" className="max-w-4xl mx-auto px-5 py-20">
+          <h2 className="text-3xl font-bold text-center">{t('billing.pricingTitle')}</h2>
+          <p className="text-body mt-3 text-center">{t('billing.pricingSubtitle')}</p>
+          <div className="mt-12">
+            <PricingCards
+              offre={offre}
+              deviseCarte={deviseCarteParDefaut(Object.keys(offre.stripe.prix))}
+              footer={{
+                free: <Link to={user ? '/dashboard' : '/signup'}><Button variant="secondary" className="w-full">{t('landing.ctaPrimary')}</Button></Link>,
+                pro: <Link to={user ? '/abonnement' : '/signup'}><Button className="w-full">{t('billing.goPro')}</Button></Link>,
+              }}
+            />
+          </div>
+        </section>
+      )}
 
       <section className="max-w-6xl mx-auto px-5 py-20">
         <div className="relative overflow-hidden rounded-2xl bg-ink px-8 py-14 sm:px-14">

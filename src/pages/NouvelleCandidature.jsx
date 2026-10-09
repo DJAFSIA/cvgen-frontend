@@ -6,6 +6,7 @@ import { downloadDocument } from '../services/download'
 import { useI18n } from '../i18n'
 import { Alert, Button, Card, Field, Input, Spinner, Textarea } from '../components/ui'
 import TemplateMock from '../components/TemplateMock'
+import ErrorAlert from '../components/ErrorAlert'
 
 const MODELES = ['classique', 'moderne', 'ats']
 const LANGUES_DOCUMENTS = ['auto', 'fr', 'en', 'es', 'de', 'pt', 'it']
@@ -163,7 +164,7 @@ export default function NouvelleCandidature() {
       <p className="mt-1 text-body">{t('apply.subtitle')}</p>
       <div className="mt-6 overflow-x-auto"><Stepper current={step} labels={t('apply.steps')} /></div>
 
-      {error && <div className="mt-6"><Alert>{error}</Alert></div>}
+      {error && <div className="mt-6"><ErrorAlert message={error} /></div>}
 
       {step === 0 && (
         <Card className="mt-6 p-6 space-y-6">
