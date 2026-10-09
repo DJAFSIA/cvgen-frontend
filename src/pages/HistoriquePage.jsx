@@ -4,7 +4,7 @@ import { useI18n } from '../i18n'
 import { candidatureAPI, errorMessage } from '../services/api'
 import { Alert, Button, Card, Spinner } from '../components/ui'
 import StatusBadge, { ScoreBar } from '../components/StatusBadge'
-import { saveBlob } from '../services/download'
+import { downloadDocument } from '../services/download'
 
 export default function HistoriquePage() {
   const { t, lang } = useI18n()
@@ -24,8 +24,7 @@ export default function HistoriquePage() {
     setBusy(`${c.id}:${type}`)
     setError('')
     try {
-      const res = await candidatureAPI.exportPdf(c.id, type)
-      saveBlob(res.data, `${type === 'cv' ? 'CV' : 'Letter'}_${(c.entreprise || 'application').replace(/[^\w-]+/g, '_')}.pdf`)
+      await downloadDocument(c.id, type)
     } catch {
       setError(t('apply.pdfError'))
     } finally {

@@ -84,6 +84,11 @@ export const candidatureAPI = {
       reponses_alignement: reponsesAlignement,
     }),
   list: () => api.get('/candidature/'),
+  baseURL: api.defaults.baseURL,
+  lienTelechargement: (id, type, modele) =>
+    api.post(`/candidature/${id}/lien-telechargement`, null, {
+      params: { type_doc: type, ...(modele ? { modele } : {}) },
+    }),
   exportPdf: (id, type, modele) =>
     api.get(`/candidature/${id}/export-pdf`, {
       params: { type_doc: type, ...(modele ? { modele } : {}) },

@@ -2,7 +2,7 @@ import { useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 import { AlertCircle, CheckCircle2, Download, Lightbulb, Link2, RotateCcw, Sparkles, Wand2 } from 'lucide-react'
 import { offreAPI, candidatureAPI, errorMessage } from '../services/api'
-import { saveBlob } from '../services/download'
+import { downloadDocument } from '../services/download'
 import { useI18n } from '../i18n'
 import { Alert, Button, Card, Field, Input, Spinner, Textarea } from '../components/ui'
 import TemplateMock from '../components/TemplateMock'
@@ -144,8 +144,7 @@ export default function NouvelleCandidature() {
     setBusy('pdf')
     setError('')
     try {
-      const res = await candidatureAPI.exportPdf(resultat.id, type, type === 'cv' ? modele : undefined)
-      saveBlob(res.data, `${type === 'cv' ? 'CV' : 'Cover_letter'}.pdf`)
+      await downloadDocument(resultat.id, type, type === 'cv' ? modele : undefined)
     } catch {
       setError(t('apply.pdfError'))
     } finally {
