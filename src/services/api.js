@@ -64,9 +64,10 @@ export const offreAPI = {
 
 export const candidatureAPI = {
   create: (offreId) => api.post('/candidature/', { offre_id: offreId }),
-  generer: (id, reponsesAlignement = [], modeleCv = 'classique') =>
+  generer: (id, reponsesAlignement = [], modeleCv = 'classique', langueDocuments = 'auto') =>
     api.post(`/candidature/${id}/generer`, {
       modele_cv: modeleCv,
+      langue_documents: langueDocuments,
       ton_lettre: 'professionnel',
       reponses_alignement: reponsesAlignement,
     }),

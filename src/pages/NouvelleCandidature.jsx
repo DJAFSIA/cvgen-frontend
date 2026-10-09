@@ -8,6 +8,7 @@ import { Alert, Button, Card, Field, Input, Spinner, Textarea } from '../compone
 import TemplateMock from '../components/TemplateMock'
 
 const MODELES = ['classique', 'moderne', 'ats']
+const LANGUES_DOCUMENTS = ['auto', 'fr', 'en', 'es', 'de', 'pt', 'it']
 const MIN_CHARS = 30
 
 function Stepper({ current, labels }) {
@@ -79,6 +80,7 @@ export default function NouvelleCandidature() {
   const [url, setUrl] = useState('')
   const [contenu, setContenu] = useState('')
   const [modele, setModele] = useState('classique')
+  const [langueDocs, setLangueDocs] = useState('auto')
   const [analyse, setAnalyse] = useState(null)
   const [alignement, setAlignement] = useState(null)
   const [reponses, setReponses] = useState({})
@@ -129,7 +131,7 @@ export default function NouvelleCandidature() {
         .filter((item) => item.reponse)
       const created = await candidatureAPI.create(analyse.id)
       const id = created.data.id
-      const gen = await candidatureAPI.generer(id, payload, modele)
+      const gen = await candidatureAPI.generer(id, payload, modele, langueDocs)
       setResultat({ id, cv: gen.data.cv, lettre: gen.data.lettre })
     } catch (err) {
       setError(errorMessage(err, t, 'apply.generateError'))
@@ -229,6 +231,19 @@ export default function NouvelleCandidature() {
                     </Field>
                   </div>
                 ))}
+
+                <Field id="langue-docs" label={t('apply.docLanguage')} hint={t('apply.docLanguageHint')}>
+                  <select
+                    id="langue-docs"
+                    value={langueDocs}
+                    onChange={(e) => setLangueDocs(e.target.value)}
+                    className="w-full sm:w-72 h-10 bg-white border border-line rounded-md px-3 text-sm text-ink focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/20"
+                  >
+                    {LANGUES_DOCUMENTS.map((code) => (
+                      <option key={code} value={code}>{t(`apply.docLang.${code}`)}</option>
+                    ))}
+                  </select>
+                </Field>
 
                 <fieldset>
                   <legend className="text-[13px] font-medium text-ink mb-3">{t('apply.chooseTemplate')}</legend>
