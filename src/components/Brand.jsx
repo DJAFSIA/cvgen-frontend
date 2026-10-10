@@ -33,7 +33,7 @@ export function LangSwitch() {
  * Ruban degrade abstrait, inspire du hero de Stripe : bandes courbes en SVG (aucune image),
  * recouvertes d'un fin motif de rayures.
  */
-export function Ribbon({ className = '' }) {
+export function Ribbon({ className = '', draw = false }) {
   const bands = [
     { d: 'M-40 -60 C 220 120, 120 380, 330 560 S 520 780, 640 860', w: 120, g: 'rb1' },
     { d: 'M110 -80 C 380 90, 250 340, 470 520 S 640 760, 760 840', w: 105, g: 'rb2' },
@@ -55,10 +55,15 @@ export function Ribbon({ className = '' }) {
             {bands.map((b) => <path key={b.g} d={b.d} fill="none" stroke="#fff" strokeWidth={b.w} strokeLinecap="round" />)}
           </mask>
         </defs>
-        {bands.map((b) => (
-          <path key={b.g} d={b.d} fill="none" stroke={`url(#${b.g})`} strokeWidth={b.w} strokeLinecap="round" opacity="0.96" />
+        {bands.map((b, i) => (
+          <path
+            key={b.g} d={b.d} fill="none" stroke={`url(#${b.g})`} strokeWidth={b.w} strokeLinecap="round" opacity="0.96"
+            pathLength={draw ? 1 : undefined}
+            className={draw ? 'ribbon-draw' : undefined}
+            style={draw ? { animationDelay: `${250 + i * 160}ms` } : undefined}
+          />
         ))}
-        <rect width="700" height="760" fill="url(#rbLines)" mask="url(#rbMask)" />
+        <rect width="700" height="760" fill="url(#rbLines)" mask="url(#rbMask)" className={draw ? 'ribbon-lines' : undefined} />
       </svg>
     </div>
   )

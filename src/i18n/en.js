@@ -28,7 +28,7 @@ export default {
   landing: {
     eyebrow: 'AI-powered job applications',
     titleDark: 'A tailored application for every job offer.',
-    titleMuted: 'CV and cover letter, written from the offer itself, in its language.',
+    titleMuted: 'CV and cover letter written from the offer.',
     subtitle: 'Import your CV once. Paste any job offer. CVGen scores the match, asks the questions that make your letter personal, and delivers ATS-friendly PDFs.',
     ctaPrimary: 'Get started',
     ctaSecondary: 'Log in',
@@ -274,5 +274,26 @@ export default {
     featImports: "{n} CV imports per month",
     featTemplates: "3 CV templates, PDF export, any language",
     featPayments: "Card or MTN / Orange Mobile Money",
+  },
+  story: {
+    "title": "From job offer to tailored CV, without rewriting anything yourself",
+    "steps": [
+      {
+        "title": "Read the offer like a recruiter",
+        "text": "CVGen picks out the skills, tools and expectations the offer actually cares about."
+      },
+      {
+        "title": "See where you stand",
+        "text": "A match score, your strengths and the gaps to address, before you spend time applying."
+      },
+      {
+        "title": "Get a CV that answers the offer",
+        "text": "Your real experience, rewritten with the offer's words. Nothing invented."
+      },
+      {
+        "title": "In the right language",
+        "text": "Offer in English, application in Paris? Pick the language: section titles follow."
+      }
+    ]
   },
 }

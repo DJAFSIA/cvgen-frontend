@@ -28,7 +28,7 @@ export default {
   landing: {
     eyebrow: 'Candidatures propulsées par l\'IA',
     titleDark: 'Une candidature sur mesure pour chaque offre.',
-    titleMuted: 'CV et lettre de motivation écrits à partir de l\'offre elle-même, dans sa langue.',
+    titleMuted: "CV et lettre écrits à partir de l'offre.",
     subtitle: 'Importez votre CV une fois. Collez n\'importe quelle offre. CVGen évalue la compatibilité, pose les questions qui rendent votre lettre personnelle et livre des PDF compatibles ATS.',
     ctaPrimary: 'Commencer',
     ctaSecondary: 'Se connecter',
@@ -274,5 +274,26 @@ export default {
     featImports: "{n} imports de CV par mois",
     featTemplates: "3 modèles de CV, export PDF, toutes langues",
     featPayments: "Carte ou Mobile Money MTN / Orange",
+  },
+  story: {
+    "title": "De l'offre au CV sur mesure, sans rien réécrire vous-même",
+    "steps": [
+      {
+        "title": "Lire l'offre comme un recruteur",
+        "text": "CVGen repère les compétences, les outils et les attentes qui comptent vraiment dans l'offre."
+      },
+      {
+        "title": "Savoir où vous en êtes",
+        "text": "Un score de compatibilité, vos points forts et les écarts à combler, avant de postuler."
+      },
+      {
+        "title": "Recevoir un CV qui répond à l'offre",
+        "text": "Vos vraies expériences, reformulées avec les mots de l'offre. Rien d'inventé."
+      },
+      {
+        "title": "Dans la bonne langue",
+        "text": "Offre en anglais, candidature à Paris ? Choisissez la langue : les titres de section suivent."
+      }
+    ]
   },
 }

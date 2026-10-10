@@ -23,6 +23,19 @@
   0%, 100% { transform: translate3d(0, 0, 0) rotate(var(--r)); }
   50% { transform: translate3d(0, -14px, 0) rotate(calc(var(--r) + 1.5deg)); }
 }
+/* Sequence d'ouverture du hero */
+@keyframes hero-in {
+  from { opacity: 0; transform: translateY(14px); filter: blur(4px); }
+  to { opacity: 1; transform: none; filter: none; }
+}
+.hero-in { animation: hero-in .9s cubic-bezier(.2, .7, .1, 1) both; }
+
+/* Les bandes du ruban se tracent, puis les rayures apparaissent */
+@keyframes ribbon-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+.ribbon-draw { stroke-dasharray: 1; stroke-dashoffset: 1; animation: ribbon-draw 1.8s cubic-bezier(.65, 0, .2, 1) forwards; }
+@keyframes ribbon-lines { from { opacity: 0; } to { opacity: 1; } }
+.ribbon-lines { opacity: 0; animation: ribbon-lines .8s ease 1.5s forwards; }
+
 @keyframes fade-up {
   from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: translateY(0); }
@@ -30,6 +43,8 @@
 .fade-up { animation: fade-up .4s ease both; }
 
 @media (prefers-reduced-motion: reduce) {
-  .fade-up, .ribbon-shape { animation: none !important; }
+  .fade-up, .ribbon-shape, .hero-in { animation: none !important; }
+  .ribbon-draw { animation: none !important; stroke-dashoffset: 0; }
+  .ribbon-lines { animation: none !important; opacity: 1; }
   html { scroll-behavior: auto; }
 }
