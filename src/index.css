@@ -36,6 +36,14 @@
 @keyframes ribbon-lines { from { opacity: 0; } to { opacity: 1; } }
 .ribbon-lines { opacity: 0; animation: ribbon-lines .8s ease 1.5s forwards; }
 
+/* Apparitions a l'entree dans l'ecran (composant Reveal) */
+.reveal { transition: opacity .9s cubic-bezier(.2, .7, .1, 1), transform 1s cubic-bezier(.2, .7, .1, 1), clip-path 1s cubic-bezier(.2, .7, .1, 1); }
+.reveal-up { opacity: 0; transform: translateY(28px); }
+.reveal-scale { opacity: 0; transform: scale(.94); }
+.reveal-mask .reveal-inner { clip-path: inset(0 0 100% 0); transform: translateY(40%); transition: transform 1s cubic-bezier(.2, .7, .1, 1), clip-path 1s cubic-bezier(.2, .7, .1, 1); }
+.reveal.is-in { opacity: 1; transform: none; }
+.reveal-mask.is-in .reveal-inner { clip-path: inset(0 0 -12% 0); transform: none; }
+
 @keyframes fade-up {
   from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: translateY(0); }
@@ -44,6 +52,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .fade-up, .ribbon-shape, .hero-in { animation: none !important; }
+  .reveal, .reveal-inner { opacity: 1 !important; transform: none !important; clip-path: none !important; transition: none !important; }
   .ribbon-draw { animation: none !important; stroke-dashoffset: 0; }
   .ribbon-lines { animation: none !important; opacity: 1; }
   html { scroll-behavior: auto; }

@@ -296,4 +296,18 @@ export default {
       }
     ]
   },
+  manifesto: {
+    "text": "Chaque offre attend des mots précis. CVGen les trouve, les relie à votre vrai parcours et les place là où un recruteur regarde en premier.",
+    "keys": [
+      "mots",
+      "précis",
+      "vrai",
+      "parcours",
+      "recruteur"
+    ]
+  },
+  marquee: {
+    "title": "Rédigée dans la langue du poste",
+    "text": "Français, anglais, espagnol, allemand, portugais, italien : titres de section, formules de politesse et dates suivent les usages du pays."
+  },
 }

@@ -2,6 +2,7 @@ import { useRef } from 'react'
 import { useI18n } from '../../i18n'
 import { segment, useReducedMotion, useScrollProgress } from '../../hooks/useScroll'
 import TemplateMock from '../TemplateMock'
+import Reveal from '../motion/Reveal'
 
 const MODELES = ['classique', 'moderne', 'ats']
 const DEPLOIEMENT = [
@@ -21,8 +22,8 @@ export default function TemplatesFan() {
   return (
     <section id="templates" ref={ref} className="max-w-6xl mx-auto px-5 py-24 overflow-hidden">
       <div className="max-w-xl">
-        <h2 className="text-3xl sm:text-[40px] leading-[1.08] font-semibold tracking-tight">{t('landing.templatesTitle')}</h2>
-        <p className="mt-3 text-body">{t('landing.templatesSubtitle')}</p>
+        <Reveal as="h2" variant="mask" className="text-3xl sm:text-[40px] leading-[1.08] font-semibold tracking-tight">{t('landing.templatesTitle')}</Reveal>
+        <Reveal as="p" delay={120} className="mt-3 text-body">{t('landing.templatesSubtitle')}</Reveal>
       </div>
 
       {/* Grand ecran : eventail anime */}

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowRight, Check, FileDown, Gauge, Languages, LayoutTemplate, MessageSquareText, ShieldCheck } from 'lucide-react'
 import { useI18n } from '../i18n'
@@ -10,6 +10,11 @@ import { Button } from '../components/ui'
 import PricingCards from '../components/PricingCards'
 import StoryScroll from '../components/landing/StoryScroll'
 import TemplatesFan from '../components/landing/TemplatesFan'
+import Manifesto from '../components/landing/Manifesto'
+import LanguagesMarquee from '../components/landing/LanguagesMarquee'
+import Reveal from '../components/motion/Reveal'
+import ScrollProgressBar from '../components/motion/ScrollProgressBar'
+import { segment, useReducedMotion, useScrollProgress } from '../hooks/useScroll'
 
 const featureIcons = [Gauge, MessageSquareText, Languages, ShieldCheck, LayoutTemplate, FileDown]
 
@@ -18,6 +23,15 @@ export default function LandingPage() {
   const { user } = useAuth()
   const [offre, setOffre] = useState(null)
   const features = t('landing.features')
+  const reduit = useReducedMotion()
+  const heroRef = useRef(null)
+  const ctaRef = useRef(null)
+  // Le hero s'efface en remontant pendant que le ruban part en parallaxe
+  const sortie = useScrollProgress(heroRef, { mode: 'exit', enabled: !reduit })
+  const sortieHero = reduit ? 0 : sortie
+  // Le bandeau final s'agrandit en entrant dans l'ecran
+  const entreeCta = useScrollProgress(ctaRef, { mode: 'pass', enabled: !reduit })
+  const ouvertureCta = reduit ? 1 : segment(entreeCta, 0.05, 0.4)
 
   useEffect(() => {
     billingAPI.plans().then((res) => setOffre(res.data)).catch(() => { /* section masquee si l'API ne repond pas */ })
@@ -25,7 +39,7 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-line/70">
+      <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-line/70 relative">
         <div className="max-w-6xl mx-auto px-5 h-16 flex items-center justify-between">
           <div className="flex items-center gap-8">
             <Logo />
@@ -48,13 +62,16 @@ export default function LandingPage() {
             )}
           </div>
         </div>
+        <ScrollProgressBar />
       </header>
 
       {/* Hero : une seule sequence orchestree au chargement (titre puis trace du ruban) */}
-      <section className="relative overflow-hidden">
-        <Ribbon draw className="hidden lg:block right-[-4%] top-0 w-[52%] h-full" />
+      <section ref={heroRef} className="relative overflow-hidden">
+        <div className="hidden lg:block absolute right-[-4%] top-0 w-[52%] h-full" style={{ transform: `translateY(${sortieHero * 140}px) rotate(${sortieHero * 5}deg)` }}>
+          <Ribbon draw className="inset-0" />
+        </div>
         <div className="max-w-6xl mx-auto px-5 pt-24 pb-32 md:pt-32 md:pb-40 relative">
-          <div className="max-w-[600px] relative z-10">
+          <div className="max-w-[600px] relative z-10" style={{ opacity: 1 - sortieHero * 1.4, transform: `translateY(${-sortieHero * 80}px) scale(${1 - sortieHero * 0.04})`, transformOrigin: 'left top' }}>
             <h1 className="text-[42px] sm:text-[56px] lg:text-[62px] font-semibold leading-[1.04] tracking-[-0.035em]">
               <span className="hero-in inline" style={{ animationDelay: '60ms' }}>{t('landing.titleDark')}</span>{' '}
               <span className="hero-in inline text-slate-500" style={{ animationDelay: '200ms' }}>{t('landing.titleMuted')}</span>
@@ -75,22 +92,26 @@ export default function LandingPage() {
         </div>
       </section>
 
+      <Manifesto />
+
       <StoryScroll />
+
+      <LanguagesMarquee />
 
       {/* Fonctionnalites : titre fixe a gauche, liste a droite */}
       <section id="features" className="max-w-6xl mx-auto px-5 py-24 grid lg:grid-cols-[minmax(0,4fr)_minmax(0,8fr)] gap-12">
         <div className="lg:sticky lg:top-28 self-start">
-          <h2 className="text-3xl sm:text-[40px] leading-[1.08] font-semibold tracking-tight">{t('landing.featuresTitle')}</h2>
+          <Reveal as="h2" variant="mask" className="text-3xl sm:text-[40px] leading-[1.08] font-semibold tracking-tight">{t('landing.featuresTitle')}</Reveal>
         </div>
         <div className="grid sm:grid-cols-2 gap-x-10">
           {features.map((feature, i) => {
             const Icon = featureIcons[i]
             return (
-              <div key={feature.title} className="border-t border-line py-7">
-                <Icon size={22} className="text-brand" aria-hidden="true" />
+              <Reveal key={feature.title} delay={(i % 2) * 120 + Math.floor(i / 2) * 60} className="border-t border-line py-7">
+                <span className="grid place-items-center w-11 h-11 rounded-xl bg-brand-soft text-brand"><Icon size={21} aria-hidden="true" /></span>
                 <h3 className="mt-4 font-semibold text-ink">{feature.title}</h3>
                 <p className="mt-1.5 text-[15px] leading-relaxed">{feature.text}</p>
-              </div>
+              </Reveal>
             )
           })}
         </div>
@@ -100,9 +121,9 @@ export default function LandingPage() {
 
       {offre && (
         <section id="pricing" className="max-w-4xl mx-auto px-5 py-24">
-          <h2 className="text-3xl sm:text-[40px] leading-[1.08] font-semibold tracking-tight text-center">{t('billing.pricingTitle')}</h2>
-          <p className="text-body mt-3 text-center">{t('billing.pricingSubtitle')}</p>
-          <div className="mt-12">
+          <Reveal as="h2" variant="mask" className="text-3xl sm:text-[40px] leading-[1.08] font-semibold tracking-tight text-center">{t('billing.pricingTitle')}</Reveal>
+          <Reveal as="p" delay={120} className="text-body mt-3 text-center">{t('billing.pricingSubtitle')}</Reveal>
+          <Reveal variant="scale" delay={200} className="mt-12">
             <PricingCards
               offre={offre}
               deviseCarte={deviseCarteParDefaut(Object.keys(offre.stripe.prix))}
@@ -111,12 +132,15 @@ export default function LandingPage() {
                 pro: <Link to={user ? '/abonnement' : '/signup'}><Button className="w-full">{t('billing.goPro')}</Button></Link>,
               }}
             />
-          </div>
+          </Reveal>
         </section>
       )}
 
-      <section className="max-w-6xl mx-auto px-5 pb-24">
-        <div className="relative overflow-hidden rounded-3xl bg-ink px-8 py-16 sm:px-16">
+      <section ref={ctaRef} className="max-w-6xl mx-auto px-5 pb-24">
+        <div
+          className="relative overflow-hidden bg-ink px-8 py-16 sm:px-16 sm:py-24"
+          style={{ transform: `scale(${0.9 + ouvertureCta * 0.1})`, borderRadius: `${48 - ouvertureCta * 24}px`, opacity: 0.4 + ouvertureCta * 0.6 }}
+        >
           <Ribbon className="hidden md:block right-[-12%] top-[-30%] w-[55%] h-[160%] opacity-90" />
           <div className="relative max-w-lg">
             <h2 className="text-3xl sm:text-[40px] leading-[1.08] font-semibold tracking-tight !text-white">{t('landing.ctaTitle')}</h2>

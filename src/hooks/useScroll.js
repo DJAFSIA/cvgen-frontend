@@ -35,6 +35,7 @@ export function useMinWidth(minWidth) {
  * - mode "pin"  : 0 quand le haut de la section atteint le haut de l'ecran, 1 quand son bas
  *                 atteint le bas de l'ecran (section epinglee plus haute que l'ecran).
  * - mode "pass" : 0 quand la section entre par le bas, 1 quand elle sort par le haut.
+ * - mode "exit" : 0 quand le haut de la section est en haut de l'ecran, 1 quand elle en est sortie.
  */
 export function useScrollProgress(ref, { mode = 'pin', enabled = true } = {}) {
   const [progress, setProgress] = useState(0)
@@ -50,7 +51,9 @@ export function useScrollProgress(ref, { mode = 'pin', enabled = true } = {}) {
       const vh = window.innerHeight
       const p = mode === 'pin'
         ? clamp(-r.top / Math.max(1, r.height - vh))
-        : clamp((vh - r.top) / (vh + r.height))
+        : mode === 'exit'
+          ? clamp(-r.top / Math.max(1, r.height))
+          : clamp((vh - r.top) / (vh + r.height))
       setProgress(p)
     }
     const onScroll = () => { if (!frame) frame = requestAnimationFrame(mesurer) }

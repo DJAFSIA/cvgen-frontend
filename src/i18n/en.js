@@ -296,4 +296,18 @@ export default {
       }
     ]
   },
+  manifesto: {
+    "text": "Every job offer is waiting for specific words. CVGen finds them, connects them to your real experience and puts them where a recruiter looks first.",
+    "keys": [
+      "specific",
+      "words",
+      "real",
+      "experience",
+      "recruiter"
+    ]
+  },
+  marquee: {
+    "title": "Written in the language of the job",
+    "text": "French, English, Spanish, German, Portuguese, Italian: section titles, greetings and dates follow the local conventions."
+  },
 }
