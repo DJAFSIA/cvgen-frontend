@@ -26,6 +26,7 @@ export default {
     templates: 'Templates',
   },
   landing: {
+    ctaLearn: "See how it works",
     eyebrow: 'AI-powered job applications',
     titleDark: 'A tailored application for every job offer.',
     titleMuted: 'CV and cover letter written from the offer.',
@@ -309,5 +310,9 @@ export default {
   marquee: {
     "title": "Written in the language of the job",
     "text": "French, English, Spanish, German, Portuguese, Italian: section titles, greetings and dates follow the local conventions."
+  },
+  bento: {
+    "ask": "Which result best proves you can succeed in this role?",
+    "answer": "I cut the nightly batch from 6h to 2h."
   },
 }

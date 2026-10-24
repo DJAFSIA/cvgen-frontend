@@ -1,22 +1,22 @@
 import { AlertCircle, CheckCircle2, Loader2 } from 'lucide-react'
 
 const buttonStyles = {
-  primary: 'bg-brand text-white hover:bg-brand-dark shadow-sm',
-  secondary: 'bg-white text-ink border border-line hover:bg-surface shadow-sm',
+  primary: 'bg-brand text-white hover:bg-brand-dark',
+  secondary: 'bg-white text-brand border border-brand hover:bg-brand-soft',
   ghost: 'text-ink hover:bg-surface',
-  dark: 'bg-ink text-white hover:bg-[#13365c]',
+  dark: 'bg-ink text-white hover:bg-black',
 }
 const buttonSizes = {
-  sm: 'h-8 px-3 text-[13px]',
-  md: 'h-10 px-4 text-sm',
-  lg: 'h-12 px-6 text-[15px]',
+  sm: 'h-8 px-4 text-[13px]',
+  md: 'h-10 px-5 text-sm',
+  lg: 'h-12 px-7 text-[17px]',
 }
 
 export function Button({ variant = 'primary', size = 'md', loading = false, className = '', children, disabled, ...props }) {
   return (
     <button
       disabled={disabled || loading}
-      className={`inline-flex items-center justify-center gap-2 rounded-md font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap ${buttonStyles[variant]} ${buttonSizes[size]} ${className}`}
+      className={`inline-flex items-center justify-center gap-2 rounded-full font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap ${buttonStyles[variant]} ${buttonSizes[size]} ${className}`}
       {...props}
     >
       {loading && <Loader2 size={16} className="animate-spin" aria-hidden="true" />}
@@ -27,14 +27,14 @@ export function Button({ variant = 'primary', size = 'md', loading = false, clas
 
 export function Card({ className = '', children, ...props }) {
   return (
-    <div className={`bg-white border border-line rounded-xl2 shadow-card ${className}`} {...props}>
+    <div className={`bg-white border border-black/[.06] rounded-xl2 shadow-card ${className}`} {...props}>
       {children}
     </div>
   )
 }
 
 const fieldClasses =
-  'w-full bg-white border border-line rounded-md px-3 text-sm text-ink placeholder:text-slate-400 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/20 transition'
+  'w-full bg-white border border-line rounded-xl px-3.5 text-[15px] text-ink placeholder:text-slate-400 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/20 transition'
 
 export function Field({ label, hint, id, children }) {
   return (
@@ -47,7 +47,7 @@ export function Field({ label, hint, id, children }) {
 }
 
 export function Input({ className = '', ...props }) {
-  return <input className={`${fieldClasses} h-10 ${className}`} {...props} />
+  return <input className={`${fieldClasses} h-11 ${className}`} {...props} />
 }
 
 export function Textarea({ className = '', ...props }) {

@@ -26,6 +26,7 @@ export default {
     templates: 'Modèles',
   },
   landing: {
+    ctaLearn: "Voir comment ça marche",
     eyebrow: 'Candidatures propulsées par l\'IA',
     titleDark: 'Une candidature sur mesure pour chaque offre.',
     titleMuted: "CV et lettre écrits à partir de l'offre.",
@@ -309,5 +310,9 @@ export default {
   marquee: {
     "title": "Rédigée dans la langue du poste",
     "text": "Français, anglais, espagnol, allemand, portugais, italien : titres de section, formules de politesse et dates suivent les usages du pays."
+  },
+  bento: {
+    "ask": "Quel résultat prouve le mieux votre capacité à réussir dans ce poste ?",
+    "answer": "J'ai réduit le traitement nocturne de 6 h à 2 h."
   },
 }

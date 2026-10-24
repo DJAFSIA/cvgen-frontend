@@ -12,7 +12,7 @@ export default function Manifesto() {
   const cles = new Set(t('manifesto.keys'))
 
   return (
-    <section ref={ref} className="relative bg-white" style={{ height: reduit ? 'auto' : '230vh' }}>
+    <section ref={ref} className="relative bg-black" style={{ height: reduit ? 'auto' : '230vh' }}>
       <div className={`${reduit ? '' : 'sticky top-0 h-screen'} flex items-center`}>
         <p className="max-w-5xl mx-auto px-5 py-24 text-[30px] sm:text-[44px] lg:text-[56px] leading-[1.12] font-semibold tracking-[-0.03em]">
           {mots.map((mot, i) => {
@@ -26,8 +26,8 @@ export default function Manifesto() {
                 className="transition-colors duration-150"
                 style={{
                   color: cle
-                    ? `rgba(99, 91, 255, ${0.16 + lumiere * 0.84})`
-                    : `rgba(10, 37, 64, ${0.14 + lumiere * 0.86})`,
+                    ? `rgba(41, 151, 255, ${0.18 + lumiere * 0.82})`
+                    : `rgba(245, 245, 247, ${0.16 + lumiere * 0.84})`,
                 }}
               >
                 {mot}{' '}

@@ -15,7 +15,7 @@ export default function LanguagesMarquee() {
   const decalage = reduit ? 0 : (p - 0.5) * 30
 
   return (
-    <section ref={ref} className="relative overflow-hidden bg-ink py-24 sm:py-28" aria-labelledby="langues-titre">
+    <section ref={ref} className="relative overflow-hidden bg-black py-28 sm:py-32" aria-labelledby="langues-titre">
       <div className="max-w-6xl mx-auto px-5">
         <Reveal as="h2" variant="mask" id="langues-titre" className="text-3xl sm:text-[40px] leading-[1.08] font-semibold tracking-tight !text-white max-w-xl">{t('marquee.title')}</Reveal>
         <Reveal as="p" delay={120} className="mt-3 text-white/65 max-w-lg">{t('marquee.text')}</Reveal>

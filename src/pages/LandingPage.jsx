@@ -1,37 +1,32 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowRight, Check, FileDown, Gauge, Languages, LayoutTemplate, MessageSquareText, ShieldCheck } from 'lucide-react'
+import { ChevronRight } from 'lucide-react'
 import { useI18n } from '../i18n'
 import { useAuth } from '../context/AuthContext'
 import { billingAPI } from '../services/api'
 import { deviseCarteParDefaut } from '../services/money'
-import { Logo, LangSwitch, Ribbon } from '../components/Brand'
+import { Logo, LangSwitch } from '../components/Brand'
 import { Button } from '../components/ui'
 import PricingCards from '../components/PricingCards'
-import StoryScroll from '../components/landing/StoryScroll'
-import TemplatesFan from '../components/landing/TemplatesFan'
+import HeroShowcase from '../components/landing/HeroShowcase'
 import Manifesto from '../components/landing/Manifesto'
+import StoryScroll from '../components/landing/StoryScroll'
+import BentoFeatures from '../components/landing/BentoFeatures'
 import LanguagesMarquee from '../components/landing/LanguagesMarquee'
+import TemplatesFan from '../components/landing/TemplatesFan'
 import Reveal from '../components/motion/Reveal'
 import ScrollProgressBar from '../components/motion/ScrollProgressBar'
 import { segment, useReducedMotion, useScrollProgress } from '../hooks/useScroll'
-
-const featureIcons = [Gauge, MessageSquareText, Languages, ShieldCheck, LayoutTemplate, FileDown]
 
 export default function LandingPage() {
   const { t } = useI18n()
   const { user } = useAuth()
   const [offre, setOffre] = useState(null)
-  const features = t('landing.features')
   const reduit = useReducedMotion()
-  const heroRef = useRef(null)
   const ctaRef = useRef(null)
-  // Le hero s'efface en remontant pendant que le ruban part en parallaxe
-  const sortie = useScrollProgress(heroRef, { mode: 'exit', enabled: !reduit })
-  const sortieHero = reduit ? 0 : sortie
-  // Le bandeau final s'agrandit en entrant dans l'ecran
   const entreeCta = useScrollProgress(ctaRef, { mode: 'pass', enabled: !reduit })
-  const ouvertureCta = reduit ? 1 : segment(entreeCta, 0.05, 0.4)
+  const ouvertureCta = reduit ? 1 : segment(entreeCta, 0.05, 0.42)
+  const cible = user ? '/dashboard' : '/signup'
 
   useEffect(() => {
     billingAPI.plans().then((res) => setOffre(res.data)).catch(() => { /* section masquee si l'API ne repond pas */ })
@@ -39,24 +34,23 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-line/70 relative">
-        <div className="max-w-6xl mx-auto px-5 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-8">
-            <Logo />
-            <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-ink/75" aria-label="Main">
-              <a href="#how" className="hover:text-ink">{t('nav.howItWorks')}</a>
-              <a href="#features" className="hover:text-ink">{t('nav.features')}</a>
-              <a href="#templates" className="hover:text-ink">{t('nav.templates')}</a>
-              <a href="#pricing" className="hover:text-ink">{t('nav.pricing')}</a>
-            </nav>
-          </div>
-          <div className="flex items-center gap-2">
+      {/* Barre de navigation fine et translucide */}
+      <header className="sticky top-0 z-30 bg-white/75 backdrop-blur-xl backdrop-saturate-150 border-b border-black/[.06] relative">
+        <div className="max-w-5xl mx-auto px-5 h-12 flex items-center justify-between">
+          <Logo />
+          <nav className="hidden md:flex items-center gap-8 text-[13px] text-ink/80" aria-label="Main">
+            <a href="#how" className="hover:text-ink">{t('nav.howItWorks')}</a>
+            <a href="#features" className="hover:text-ink">{t('nav.features')}</a>
+            <a href="#templates" className="hover:text-ink">{t('nav.templates')}</a>
+            <a href="#pricing" className="hover:text-ink">{t('nav.pricing')}</a>
+          </nav>
+          <div className="flex items-center gap-3">
             <LangSwitch />
             {user ? (
               <Link to="/dashboard"><Button size="sm">{t('nav.dashboard')}</Button></Link>
             ) : (
               <>
-                <Link to="/login" className="hidden sm:block"><Button variant="secondary" size="sm">{t('common.login')}</Button></Link>
+                <Link to="/login" className="hidden sm:block text-[13px] text-ink/80 hover:text-ink">{t('common.login')}</Link>
                 <Link to="/signup"><Button size="sm">{t('common.signup')}</Button></Link>
               </>
             )}
@@ -65,30 +59,25 @@ export default function LandingPage() {
         <ScrollProgressBar />
       </header>
 
-      {/* Hero : une seule sequence orchestree au chargement (titre puis trace du ruban) */}
-      <section ref={heroRef} className="relative overflow-hidden">
-        <div className="hidden lg:block absolute right-[-4%] top-0 w-[52%] h-full" style={{ transform: `translateY(${sortieHero * 140}px) rotate(${sortieHero * 5}deg)` }}>
-          <Ribbon draw className="inset-0" />
-        </div>
-        <div className="max-w-6xl mx-auto px-5 pt-24 pb-32 md:pt-32 md:pb-40 relative">
-          <div className="max-w-[600px] relative z-10" style={{ opacity: 1 - sortieHero * 1.4, transform: `translateY(${-sortieHero * 80}px) scale(${1 - sortieHero * 0.04})`, transformOrigin: 'left top' }}>
-            <h1 className="text-[42px] sm:text-[56px] lg:text-[62px] font-semibold leading-[1.04] tracking-[-0.035em]">
-              <span className="hero-in inline" style={{ animationDelay: '60ms' }}>{t('landing.titleDark')}</span>{' '}
-              <span className="hero-in inline text-slate-500" style={{ animationDelay: '200ms' }}>{t('landing.titleMuted')}</span>
-            </h1>
-            <p className="hero-in mt-8 text-lg leading-relaxed text-body max-w-xl" style={{ animationDelay: '360ms' }}>{t('landing.subtitle')}</p>
-            <div className="hero-in mt-10 flex flex-wrap gap-3" style={{ animationDelay: '480ms' }}>
-              <Link to={user ? '/dashboard' : '/signup'}>
-                <Button size="lg">{t('landing.ctaPrimary')} <ArrowRight size={16} aria-hidden="true" /></Button>
-              </Link>
-              {!user && <Link to="/login"><Button size="lg" variant="secondary">{t('landing.ctaSecondary')}</Button></Link>}
-            </div>
-            <ul className="hero-in mt-12 flex flex-wrap gap-x-7 gap-y-2 text-sm text-muted" style={{ animationDelay: '600ms' }}>
-              {t('landing.trust').map((item) => (
-                <li key={item} className="inline-flex items-center gap-1.5"><Check size={15} className="text-brand" aria-hidden="true" />{item}</li>
-              ))}
-            </ul>
+      {/* Hero centre, puis le produit en vedette */}
+      <section className="relative pt-20 sm:pt-28 pb-24 overflow-hidden bg-gradient-to-b from-white via-white to-surface">
+        <div className="max-w-4xl mx-auto px-5 text-center">
+          <h1 className="text-[44px] sm:text-[64px] lg:text-[80px] font-semibold leading-[1.03] tracking-[-0.04em]">
+            <span className="hero-in inline" style={{ animationDelay: '60ms' }}>{t('landing.titleDark')}</span>{' '}
+            <span className="hero-in inline text-gradient" style={{ animationDelay: '220ms' }}>{t('landing.titleMuted')}</span>
+          </h1>
+          <p className="hero-in mt-7 mx-auto max-w-2xl text-[19px] sm:text-[21px] leading-relaxed text-muted" style={{ animationDelay: '380ms' }}>
+            {t('landing.subtitle')}
+          </p>
+          <div className="hero-in mt-10 flex flex-wrap items-center justify-center gap-x-8 gap-y-4" style={{ animationDelay: '520ms' }}>
+            <Link to={cible}><Button size="lg">{t('landing.ctaPrimary')}</Button></Link>
+            <a href="#how" className="inline-flex items-center gap-0.5 text-[17px] text-brand hover:underline">
+              {t('landing.ctaLearn')}<ChevronRight size={18} aria-hidden="true" />
+            </a>
           </div>
+        </div>
+        <div className="hero-in mt-20" style={{ animationDelay: '650ms' }}>
+          <HeroShowcase />
         </div>
       </section>
 
@@ -96,64 +85,52 @@ export default function LandingPage() {
 
       <StoryScroll />
 
+      <BentoFeatures />
+
       <LanguagesMarquee />
 
-      {/* Fonctionnalites : titre fixe a gauche, liste a droite */}
-      <section id="features" className="max-w-6xl mx-auto px-5 py-24 grid lg:grid-cols-[minmax(0,4fr)_minmax(0,8fr)] gap-12">
-        <div className="lg:sticky lg:top-28 self-start">
-          <Reveal as="h2" variant="mask" className="text-3xl sm:text-[40px] leading-[1.08] font-semibold tracking-tight">{t('landing.featuresTitle')}</Reveal>
-        </div>
-        <div className="grid sm:grid-cols-2 gap-x-10">
-          {features.map((feature, i) => {
-            const Icon = featureIcons[i]
-            return (
-              <Reveal key={feature.title} delay={(i % 2) * 120 + Math.floor(i / 2) * 60} className="border-t border-line py-7">
-                <span className="grid place-items-center w-11 h-11 rounded-xl bg-brand-soft text-brand"><Icon size={21} aria-hidden="true" /></span>
-                <h3 className="mt-4 font-semibold text-ink">{feature.title}</h3>
-                <p className="mt-1.5 text-[15px] leading-relaxed">{feature.text}</p>
-              </Reveal>
-            )
-          })}
-        </div>
-      </section>
-
-      <div className="bg-surface border-y border-line"><TemplatesFan /></div>
+      <div className="bg-surface"><TemplatesFan /></div>
 
       {offre && (
-        <section id="pricing" className="max-w-4xl mx-auto px-5 py-24">
-          <Reveal as="h2" variant="mask" className="text-3xl sm:text-[40px] leading-[1.08] font-semibold tracking-tight text-center">{t('billing.pricingTitle')}</Reveal>
-          <Reveal as="p" delay={120} className="text-body mt-3 text-center">{t('billing.pricingSubtitle')}</Reveal>
-          <Reveal variant="scale" delay={200} className="mt-12">
-            <PricingCards
-              offre={offre}
-              deviseCarte={deviseCarteParDefaut(Object.keys(offre.stripe.prix))}
-              footer={{
-                free: <Link to={user ? '/dashboard' : '/signup'}><Button variant="secondary" className="w-full">{t('landing.ctaPrimary')}</Button></Link>,
-                pro: <Link to={user ? '/abonnement' : '/signup'}><Button className="w-full">{t('billing.goPro')}</Button></Link>,
-              }}
-            />
-          </Reveal>
+        <section id="pricing" className="bg-white py-28">
+          <div className="max-w-4xl mx-auto px-5">
+            <Reveal as="h2" variant="mask" className="text-[40px] sm:text-[56px] leading-[1.05] font-semibold tracking-[-0.03em] text-center">{t('billing.pricingTitle')}</Reveal>
+            <Reveal as="p" delay={120} className="mt-4 text-center text-[19px] text-muted">{t('billing.pricingSubtitle')}</Reveal>
+            <Reveal variant="scale" delay={200} className="mt-14">
+              <PricingCards
+                offre={offre}
+                deviseCarte={deviseCarteParDefaut(Object.keys(offre.stripe.prix))}
+                footer={{
+                  free: <Link to={cible}><Button variant="secondary" className="w-full">{t('landing.ctaPrimary')}</Button></Link>,
+                  pro: <Link to={user ? '/abonnement' : '/signup'}><Button className="w-full">{t('billing.goPro')}</Button></Link>,
+                }}
+              />
+            </Reveal>
+          </div>
         </section>
       )}
 
-      <section ref={ctaRef} className="max-w-6xl mx-auto px-5 pb-24">
+      {/* Appel final : bloc noir qui s'agrandit en entrant */}
+      <section ref={ctaRef} className="bg-white pb-6 px-3 sm:px-6">
         <div
-          className="relative overflow-hidden bg-ink px-8 py-16 sm:px-16 sm:py-24"
-          style={{ transform: `scale(${0.9 + ouvertureCta * 0.1})`, borderRadius: `${48 - ouvertureCta * 24}px`, opacity: 0.4 + ouvertureCta * 0.6 }}
+          className="relative overflow-hidden bg-black text-center px-6 py-28 sm:py-36 mx-auto"
+          style={{
+            maxWidth: `${88 + ouvertureCta * 12}%`,
+            borderRadius: `${40 - ouvertureCta * 12}px`,
+          }}
         >
-          <Ribbon className="hidden md:block right-[-12%] top-[-30%] w-[55%] h-[160%] opacity-90" />
-          <div className="relative max-w-lg">
-            <h2 className="text-3xl sm:text-[40px] leading-[1.08] font-semibold tracking-tight !text-white">{t('landing.ctaTitle')}</h2>
-            <p className="mt-4 text-white/70">{t('landing.ctaText')}</p>
-            <Link to={user ? '/dashboard' : '/signup'} className="inline-block mt-9">
-              <Button size="lg" className="!bg-white !text-ink hover:!bg-surface">{t('landing.ctaPrimary')} <ArrowRight size={16} aria-hidden="true" /></Button>
-            </Link>
+          <div className="absolute inset-x-0 -bottom-40 mx-auto w-[70%] h-80 rounded-full blur-3xl opacity-50"
+            style={{ background: 'conic-gradient(from 180deg, #0894ff, #c959dd, #ff2e54, #ff9004, #0894ff)' }} aria-hidden="true" />
+          <div className="relative">
+            <h2 className="text-[40px] sm:text-[64px] leading-[1.04] font-semibold tracking-[-0.035em] text-gradient">{t('landing.ctaTitle')}</h2>
+            <p className="mt-5 text-[19px] text-white/70 max-w-xl mx-auto">{t('landing.ctaText')}</p>
+            <Link to={cible} className="inline-block mt-10"><Button size="lg">{t('landing.ctaPrimary')}</Button></Link>
           </div>
         </div>
       </section>
 
-      <footer className="border-t border-line">
-        <div className="max-w-6xl mx-auto px-5 py-8 flex flex-wrap items-center justify-between gap-4 text-sm text-muted">
+      <footer className="bg-surface border-t border-black/[.06]">
+        <div className="max-w-5xl mx-auto px-5 py-8 flex flex-wrap items-center justify-between gap-4 text-xs text-muted">
           <Logo />
           <span>&copy; {new Date().getFullYear()} CVGen. {t('landing.footer')}</span>
         </div>
