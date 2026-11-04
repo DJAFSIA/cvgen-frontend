@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { useI18n } from '../i18n'
 import { Logo, LangSwitch, Ribbon } from './Brand'
+import { LegalLinks } from './Legal'
 
 /** Mise en page commune des pages de compte : formulaire a gauche, ruban a droite. */
 export default function AuthShell({ title, subtitle, children, footer }) {
@@ -22,7 +23,10 @@ export default function AuthShell({ title, subtitle, children, footer }) {
           </div>
         </div>
 
-        <Link to="/" className="text-sm text-muted hover:text-ink">&larr; {t('auth.backHome')}</Link>
+        <div>
+          <Link to="/" className="text-sm text-muted hover:text-ink">&larr; {t('auth.backHome')}</Link>
+          <LegalLinks newTab className="mt-3 text-xs text-muted" />
+        </div>
       </div>
 
       <aside className="relative hidden lg:block overflow-hidden bg-surface border-l border-line">

@@ -74,6 +74,12 @@ export const authAPI = {
   google: (data) => api.post('/auth/google', data),
 }
 
+export const compteAPI = {
+  modifier: (data) => api.patch('/compte/', data),
+  exporter: () => api.get('/compte/export'),
+  supprimer: (data) => api.post('/compte/supprimer', data),
+}
+
 export const profilAPI = {
   get: () => api.get('/profil/'),
   update: (data) => api.put('/profil/', data),

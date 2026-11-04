@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { ChevronRight } from 'lucide-react'
 import { useI18n } from '../i18n'
 import { useAuth } from '../context/AuthContext'
 import { billingAPI } from '../services/api'
 import { deviseCarteParDefaut } from '../services/money'
 import { Logo, LangSwitch } from '../components/Brand'
+import { LegalLinks } from '../components/Legal'
 import { Button } from '../components/ui'
 import PricingCards from '../components/PricingCards'
 import HeroShowcase from '../components/landing/HeroShowcase'
@@ -21,6 +22,7 @@ import { segment, useReducedMotion, useScrollProgress } from '../hooks/useScroll
 export default function LandingPage() {
   const { t } = useI18n()
   const { user } = useAuth()
+  const { hash } = useLocation()
   const [offre, setOffre] = useState(null)
   const reduit = useReducedMotion()
   const ctaRef = useRef(null)
@@ -31,6 +33,11 @@ export default function LandingPage() {
   useEffect(() => {
     billingAPI.plans().then((res) => setOffre(res.data)).catch(() => { /* section masquee si l'API ne repond pas */ })
   }, [])
+
+  // Arrivee sur /#pricing depuis une autre page : la section n'existe qu'une fois les tarifs charges
+  useEffect(() => {
+    if (offre && hash) document.getElementById(hash.slice(1))?.scrollIntoView()
+  }, [offre, hash])
 
   return (
     <div className="min-h-screen bg-white">
@@ -132,6 +139,7 @@ export default function LandingPage() {
       <footer className="bg-surface border-t border-black/[.06]">
         <div className="max-w-5xl mx-auto px-5 py-8 flex flex-wrap items-center justify-between gap-4 text-xs text-muted">
           <Logo />
+          <LegalLinks />
           <span>&copy; {new Date().getFullYear()} CVGen. {t('landing.footer')}</span>
         </div>
       </footer>

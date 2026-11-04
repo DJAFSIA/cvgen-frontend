@@ -14,3 +14,16 @@ export async function downloadDocument(candidatureId, type, modele) {
   link.click()
   link.remove()
 }
+
+/** Enregistre des donnees dans un fichier JSON sur l'appareil de l'utilisateur. */
+export function saveJson(donnees, nomFichier) {
+  const url = URL.createObjectURL(new Blob([JSON.stringify(donnees, null, 2)], { type: 'application/json' }))
+  const link = document.createElement('a')
+  link.href = url
+  link.download = nomFichier
+  document.body.appendChild(link)
+  link.click()
+  link.remove()
+  // Laisse au navigateur le temps de lancer le telechargement
+  setTimeout(() => URL.revokeObjectURL(url), 1000)
+}

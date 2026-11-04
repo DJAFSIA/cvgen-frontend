@@ -4,6 +4,7 @@ import { CreditCard, Smartphone } from 'lucide-react'
 import { useI18n } from '../i18n'
 import { billingAPI, errorMessage } from '../services/api'
 import { deviseCarteParDefaut, formatPrice } from '../services/money'
+import { TexteRiche } from '../components/Legal'
 import { Alert, Badge, Button, Card, Spinner } from '../components/ui'
 
 const ZONES_MOMO = ['XAF', 'XOF']
@@ -180,6 +181,7 @@ export default function AbonnementPage() {
               ) : <p className="mt-4 text-sm text-muted">{t('billing.unavailable')}</p>}
             </Card>
           </div>
+          <p className="mt-4 text-xs text-muted"><TexteRiche texte={t('billing.legal')} /></p>
         </section>
       )}
     </div>

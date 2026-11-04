@@ -5,16 +5,18 @@ import { useI18n } from '../i18n'
 import { errorMessage } from '../services/api'
 import AuthShell from '../components/AuthShell'
 import GoogleButton from '../components/GoogleButton'
+import { TexteRiche } from '../components/Legal'
 import PasswordInput from '../components/PasswordInput'
 import { Alert, Button, Field, Input } from '../components/ui'
 
 export default function AuthPage({ mode }) {
   const isSignup = mode === 'signup'
   const { t, lang } = useI18n()
-  const { login, inscription, loginWithGoogle } = useAuth()
+  const { login, inscription, loginWithGoogle, compteSupprime } = useAuth()
   const navigate = useNavigate()
 
   const [form, setForm] = useState({ prenom: '', nom: '', email: '', mot_de_passe: '', confirm: '' })
+  const [accepte, setAccepte] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
@@ -35,7 +37,7 @@ export default function AuthPage({ mode }) {
     setLoading(true)
     try {
       if (isSignup) {
-        await inscription({ prenom: form.prenom, nom: form.nom, email: form.email, mot_de_passe: form.mot_de_passe, langue: lang })
+        await inscription({ prenom: form.prenom, nom: form.nom, email: form.email, mot_de_passe: form.mot_de_passe, langue: lang, accepte_cgu: accepte })
       } else {
         await login(form.email, form.mot_de_passe)
       }
@@ -70,13 +72,18 @@ export default function AuthPage({ mode }) {
         </>
       }
     >
+      {compteSupprime && <div className="mb-4"><Alert tone="success">{t('auth.accountDeleted')}</Alert></div>}
       {error && <div className="mb-4"><Alert>{error}</Alert></div>}
 
       <GoogleButton signup={isSignup} onCredential={google} />
       {import.meta.env.VITE_GOOGLE_CLIENT_ID && (
-        <div className="my-5 flex items-center gap-3 text-xs text-muted" aria-hidden="true">
-          <span className="flex-1 h-px bg-line" />{t('auth.or')}<span className="flex-1 h-px bg-line" />
-        </div>
+        <>
+          {/* Google peut creer le compte, meme depuis la page de connexion */}
+          <p className="mt-2 text-xs text-muted text-center"><TexteRiche texte={t('auth.googleTerms')} newTab /></p>
+          <div className="my-5 flex items-center gap-3 text-xs text-muted" aria-hidden="true">
+            <span className="flex-1 h-px bg-line" />{t('auth.or')}<span className="flex-1 h-px bg-line" />
+          </div>
+        </>
       )}
 
       <form onSubmit={submit} className="space-y-4">
@@ -119,6 +126,16 @@ export default function AuthPage({ mode }) {
               </p>
             )}
           </Field>
+        )}
+
+        {isSignup && (
+          <label className="flex items-start gap-2.5 text-[13px] leading-snug text-body">
+            <input
+              type="checkbox" checked={accepte} onChange={(e) => setAccepte(e.target.checked)} required
+              className="mt-0.5 h-4 w-4 shrink-0 accent-brand"
+            />
+            <span><TexteRiche texte={t('auth.acceptTerms')} newTab /></span>
+          </label>
         )}
 
         <Button type="submit" size="lg" loading={loading} className="w-full">

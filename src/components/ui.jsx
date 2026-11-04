@@ -5,6 +5,8 @@ const buttonStyles = {
   secondary: 'bg-white text-brand border border-brand hover:bg-brand-soft',
   ghost: 'text-ink hover:bg-surface',
   dark: 'bg-ink text-white hover:bg-black',
+  danger: 'bg-danger text-white hover:bg-danger/90',
+  dangerOutline: 'bg-white text-danger border border-danger/40 hover:bg-danger-soft',
 }
 const buttonSizes = {
   sm: 'h-8 px-4 text-[13px]',
@@ -50,6 +52,10 @@ export function Input({ className = '', ...props }) {
   return <input className={`${fieldClasses} h-11 ${className}`} {...props} />
 }
 
+export function Select({ className = '', ...props }) {
+  return <select className={`${fieldClasses} h-11 ${className}`} {...props} />
+}
+
 export function Textarea({ className = '', ...props }) {
   return <textarea className={`${fieldClasses} py-2.5 resize-y ${className}`} {...props} />
 }
@@ -63,13 +69,14 @@ const alertStyles = {
 export function Alert({ tone = 'error', title, children, action }) {
   const { box, Icon } = alertStyles[tone]
   return (
-    <div role={tone === 'error' ? 'alert' : 'status'} className={`flex items-start gap-3 border rounded-lg px-4 py-3 text-sm ${box}`}>
+    <div role={tone === 'error' ? 'alert' : 'status'} className={`flex flex-wrap sm:flex-nowrap items-start gap-3 border rounded-lg px-4 py-3 text-sm ${box}`}>
       <Icon size={18} className="mt-0.5 shrink-0" aria-hidden="true" />
-      <div className="flex-1">
+      {/* Sur telephone, le bouton passe sous le texte au lieu de deborder de l'ecran */}
+      <div className="flex-1 min-w-0 basis-[calc(100%-30px)] sm:basis-0">
         {title && <p className="font-semibold">{title}</p>}
         {children && <p className={title ? 'mt-0.5 opacity-90' : ''}>{children}</p>}
       </div>
-      {action}
+      {action && <div className="ml-[30px] sm:ml-0">{action}</div>}
     </div>
   )
 }

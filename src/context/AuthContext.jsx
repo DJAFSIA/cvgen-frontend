@@ -15,6 +15,7 @@ function lireUtilisateur() {
 
 export function AuthProvider({ children }) {
   const [user, setUserState] = useState(lireUtilisateur)
+  const [compteSupprime, setCompteSupprime] = useState(false)
   const loading = false
 
   const setUser = (next) => {
@@ -26,6 +27,7 @@ export function AuthProvider({ children }) {
     localStorage.setItem('token', access_token)
     localStorage.setItem('user', JSON.stringify(utilisateur))
     setUserState(utilisateur)
+    setCompteSupprime(false)
     return utilisateur
   }
 
@@ -57,8 +59,14 @@ export function AuthProvider({ children }) {
     setUserState(null)
   }
 
+  /** Fin de session apres la suppression du compte : la page de connexion l'annonce. */
+  const logoutApresSuppression = () => {
+    logout()
+    setCompteSupprime(true)
+  }
+
   return (
-    <AuthContext.Provider value={{ user, setUser, login, inscription, loginWithGoogle, refreshUser, logout, loading }}>
+    <AuthContext.Provider value={{ user, setUser, login, inscription, loginWithGoogle, refreshUser, logout, logoutApresSuppression, compteSupprime, loading }}>
       {children}
     </AuthContext.Provider>
   )
