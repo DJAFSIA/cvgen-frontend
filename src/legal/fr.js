@@ -10,7 +10,7 @@ export default {
   },
   docs: {
     cgu: {
-      intro: 'Ces conditions encadrent l’utilisation de {produit}, service en ligne édité par {editeur}. En créant un compte, vous les acceptez.',
+      intro: 'Ces conditions encadrent l’utilisation d’{produit}, service en ligne édité par {editeur}. En créant un compte, vous les acceptez.',
       sections: [
         {
           titre: 'Le service',
@@ -146,7 +146,7 @@ export default {
           titre: 'Qui reçoit vos données',
           paragraphes: ['Vos données ne sont ni vendues ni louées. Elles sont confiées uniquement aux prestataires nécessaires au service, qui agissent selon nos instructions :'],
           liste: [
-            'Hébergement : Render (API), Neon (base de données), Vercel (site web).',
+            'Hébergement : Render (site web et API), Neon (base de données).',
             'Intelligence artificielle : les fournisseurs cités ci-dessus.',
             'Emails : Brevo.',
             'Paiements : Stripe (cartes) et Flutterwave (Mobile Money).',

@@ -1,6 +1,6 @@
 export default {
   common: {
-    brand: 'CVGen',
+    brand: 'Apply',
     login: 'Log in',
     signup: 'Get started',
     logout: 'Log out',
@@ -32,14 +32,14 @@ export default {
     eyebrow: 'AI-powered job applications',
     titleDark: 'A tailored application for every job offer.',
     titleMuted: 'CV and cover letter written from the offer.',
-    subtitle: 'Import your CV once. Paste any job offer. CVGen scores the match, asks the questions that make your letter personal, and delivers ATS-friendly PDFs.',
+    subtitle: 'Import your CV once. Paste any job offer. Apply scores the match, asks the questions that make your letter personal, and delivers ATS-friendly PDFs.',
     ctaPrimary: 'Get started',
     ctaSecondary: 'Log in',
     trust: ['Never invents experience', 'Any language', 'ATS-friendly PDFs'],
     howTitle: 'From job offer to application in minutes',
     howSubtitle: 'Three steps, no templates to fill in by hand.',
     steps: [
-      { title: 'Import your CV', text: 'Upload your existing PDF. CVGen extracts your experience, education and skills into a profile you control.' },
+      { title: 'Import your CV', text: 'Upload your existing PDF. Apply extracts your experience, education and skills into a profile you control.' },
       { title: 'Paste the job offer', text: 'Drop a link or the text. You get a match score, your strengths and the gaps to address.' },
       { title: 'Download your documents', text: 'A CV and a cover letter tailored to the offer, as clean PDFs in the template you choose.' },
     ],
@@ -86,7 +86,7 @@ export default {
     verifying: "Confirming your email...",
     verifyDone: "Your email address is confirmed. You can now generate documents.",
     verifyResendHint: "Go to your dashboard to request a new confirmation email",
-    loginTitle: 'Log in to CVGen',
+    loginTitle: 'Log in to Apply',
     signupTitle: 'Create your account',
     loginSub: 'Welcome back.',
     signupSub: 'Start generating tailored applications.',
@@ -109,7 +109,7 @@ export default {
     emailTaken: 'This email is already in use.',
     invalid: 'Please check the information you entered.',
     sideTitle: 'Stop rewriting your CV for every offer.',
-    sideText: 'CVGen reads the job offer and builds the application around it.',
+    sideText: 'Apply reads the job offer and builds the application around it.',
     backHome: 'Back to home',
   },
   dashboard: {
@@ -265,7 +265,7 @@ export default {
     subtitle: "Your plan, your monthly usage and payment options.",
     currentPlan: "Current plan",
     free: "Free",
-    freeDesc: "To try CVGen on a few applications each month.",
+    freeDesc: "To try Apply on a few applications each month.",
     proDesc: "For an active job search, with room for every application.",
     popular: "Most popular",
     month: "month",
@@ -310,7 +310,7 @@ export default {
     "steps": [
       {
         "title": "Read the offer like a recruiter",
-        "text": "CVGen picks out the skills, tools and expectations the offer actually cares about."
+        "text": "Apply picks out the skills, tools and expectations the offer actually cares about."
       },
       {
         "title": "See where you stand",
@@ -327,7 +327,7 @@ export default {
     ]
   },
   manifesto: {
-    "text": "Every job offer is waiting for specific words. CVGen finds them, connects them to your real experience and puts them where a recruiter looks first.",
+    "text": "Every job offer is waiting for specific words. Apply finds them, connects them to your real experience and puts them where a recruiter looks first.",
     "keys": [
       "specific",
       "words",

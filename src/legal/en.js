@@ -146,7 +146,7 @@ export default {
           titre: 'Who receives your data',
           paragraphes: ['Your data is never sold or rented. It is only entrusted to the providers the service needs, who act on our instructions:'],
           liste: [
-            'Hosting: Render (API), Neon (database), Vercel (website).',
+            'Hosting: Render (website and API), Neon (database).',
             'Artificial intelligence: the providers listed above.',
             'Emails: Brevo.',
             'Payments: Stripe (cards) and Flutterwave (Mobile Money).',

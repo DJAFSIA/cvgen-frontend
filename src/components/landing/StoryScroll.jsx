@@ -2,7 +2,7 @@ import { useRef } from 'react'
 import { useI18n } from '../../i18n'
 import { segment, useMinWidth, useReducedMotion, useScrollProgress } from '../../hooks/useScroll'
 
-// Offre d'exemple : les segments "k" sont les mots-cles que le recruteur (et CVGen) reperent.
+// Offre d'exemple : les segments "k" sont les mots-cles que le recruteur (et Apply) reperent.
 const OFFRE = [
   { t: 'Northwind is hiring a ' }, { k: 'Senior Data Engineer' }, { t: ' in Lyon. You will build ' },
   { k: 'Airflow pipelines' }, { t: ' on ' }, { k: 'BigQuery' }, { t: ', model data with ' }, { k: 'dbt' },

@@ -3,9 +3,9 @@ import { useI18n } from '../i18n'
 
 export function Logo({ to = '/', dark = false }) {
   return (
-    <Link to={to} className="inline-flex items-center gap-2 font-bold text-[19px] tracking-tight" aria-label="CVGen">
-      <span className="grid place-items-center w-7 h-7 rounded-lg bg-brand text-white text-sm font-bold" aria-hidden="true">CV</span>
-      <span className={dark ? 'text-white' : 'text-ink'}>Gen</span>
+    <Link to={to} className="inline-flex items-center gap-2 font-bold text-[19px] tracking-tight" aria-label="Apply">
+      <span className="grid place-items-center w-7 h-7 rounded-lg bg-brand text-white text-sm font-bold" aria-hidden="true">A</span>
+      <span className={dark ? 'text-white' : 'text-ink'}>Apply</span>
     </Link>
   )
 }

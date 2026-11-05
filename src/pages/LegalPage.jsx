@@ -84,7 +84,7 @@ export default function LegalPage() {
       <footer className="bg-surface border-t border-black/[.06]">
         <div className="max-w-5xl mx-auto px-5 py-8 flex flex-wrap items-center justify-between gap-4 text-xs text-muted">
           <Logo />
-          <span>&copy; {new Date().getFullYear()} CVGen. {t('landing.footer')}</span>
+          <span>&copy; {new Date().getFullYear()} Apply. {t('landing.footer')}</span>
         </div>
       </footer>
     </div>

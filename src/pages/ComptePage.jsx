@@ -59,7 +59,7 @@ export default function ComptePage() {
     setExportError('')
     try {
       const res = await compteAPI.exporter()
-      saveJson(res.data, `cvgen-export-${new Date().toISOString().slice(0, 10)}.json`)
+      saveJson(res.data, `apply-export-${new Date().toISOString().slice(0, 10)}.json`)
     } catch (err) {
       setExportError(errorMessage(err, t))
     } finally {

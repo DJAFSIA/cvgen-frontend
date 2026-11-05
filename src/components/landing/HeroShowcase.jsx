@@ -38,7 +38,7 @@ export default function HeroShowcase() {
             <span className="w-3 h-3 rounded-full bg-[#ff5f57]" />
             <span className="w-3 h-3 rounded-full bg-[#febc2e]" />
             <span className="w-3 h-3 rounded-full bg-[#28c840]" />
-            <span className="ml-4 text-xs text-muted">cvgen.app</span>
+            <span className="ml-4 text-xs text-muted">apply.onrender.com</span>
           </div>
 
           <div className="grid md:grid-cols-[5fr_7fr] min-h-[380px]">

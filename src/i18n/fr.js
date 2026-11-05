@@ -1,6 +1,6 @@
 export default {
   common: {
-    brand: 'CVGen',
+    brand: 'Apply',
     login: 'Se connecter',
     signup: 'Commencer',
     logout: 'Déconnexion',
@@ -32,14 +32,14 @@ export default {
     eyebrow: 'Candidatures propulsées par l\'IA',
     titleDark: 'Une candidature sur mesure pour chaque offre.',
     titleMuted: "CV et lettre écrits à partir de l'offre.",
-    subtitle: 'Importez votre CV une fois. Collez n\'importe quelle offre. CVGen évalue la compatibilité, pose les questions qui rendent votre lettre personnelle et livre des PDF compatibles ATS.',
+    subtitle: 'Importez votre CV une fois. Collez n\'importe quelle offre. Apply évalue la compatibilité, pose les questions qui rendent votre lettre personnelle et livre des PDF compatibles ATS.',
     ctaPrimary: 'Commencer',
     ctaSecondary: 'Se connecter',
     trust: ['N\'invente jamais d\'expérience', 'Toutes les langues', 'PDF compatibles ATS'],
     howTitle: 'De l\'offre à la candidature en quelques minutes',
     howSubtitle: 'Trois étapes, aucun modèle à remplir à la main.',
     steps: [
-      { title: 'Importez votre CV', text: 'Déposez votre PDF. CVGen en extrait vos expériences, formations et compétences dans un profil que vous contrôlez.' },
+      { title: 'Importez votre CV', text: 'Déposez votre PDF. Apply en extrait vos expériences, formations et compétences dans un profil que vous contrôlez.' },
       { title: 'Collez l\'offre', text: 'Un lien ou le texte. Vous obtenez un score de compatibilité, vos points forts et les écarts à combler.' },
       { title: 'Téléchargez vos documents', text: 'Un CV et une lettre adaptés à l\'offre, en PDF propres, dans le modèle de votre choix.' },
     ],
@@ -86,7 +86,7 @@ export default {
     verifying: "Confirmation de votre email...",
     verifyDone: "Votre adresse email est confirmée. Vous pouvez maintenant générer des documents.",
     verifyResendHint: "Allez sur votre tableau de bord pour demander un nouvel email de confirmation",
-    loginTitle: 'Connexion à CVGen',
+    loginTitle: 'Connexion à Apply',
     signupTitle: 'Créez votre compte',
     loginSub: 'Content de vous revoir.',
     signupSub: 'Commencez à générer des candidatures sur mesure.',
@@ -109,7 +109,7 @@ export default {
     emailTaken: 'Cet email est déjà utilisé.',
     invalid: 'Vérifiez les informations saisies.',
     sideTitle: 'Arrêtez de réécrire votre CV pour chaque offre.',
-    sideText: 'CVGen lit l\'offre d\'emploi et construit la candidature autour d\'elle.',
+    sideText: 'Apply lit l\'offre d\'emploi et construit la candidature autour d\'elle.',
     backHome: 'Retour à l\'accueil',
   },
   dashboard: {
@@ -265,7 +265,7 @@ export default {
     subtitle: "Votre plan, votre consommation du mois et les moyens de paiement.",
     currentPlan: "Plan actuel",
     free: "Gratuit",
-    freeDesc: "Pour essayer CVGen sur quelques candidatures chaque mois.",
+    freeDesc: "Pour essayer Apply sur quelques candidatures chaque mois.",
     proDesc: "Pour une recherche d'emploi active, avec de la marge pour chaque candidature.",
     popular: "Le plus choisi",
     month: "mois",
@@ -310,7 +310,7 @@ export default {
     "steps": [
       {
         "title": "Lire l'offre comme un recruteur",
-        "text": "CVGen repère les compétences, les outils et les attentes qui comptent vraiment dans l'offre."
+        "text": "Apply repère les compétences, les outils et les attentes qui comptent vraiment dans l'offre."
       },
       {
         "title": "Savoir où vous en êtes",
@@ -327,7 +327,7 @@ export default {
     ]
   },
   manifesto: {
-    "text": "Chaque offre attend des mots précis. CVGen les trouve, les relie à votre vrai parcours et les place là où un recruteur regarde en premier.",
+    "text": "Chaque offre attend des mots précis. Apply les trouve, les relie à votre vrai parcours et les place là où un recruteur regarde en premier.",
     "keys": [
       "mots",
       "précis",
