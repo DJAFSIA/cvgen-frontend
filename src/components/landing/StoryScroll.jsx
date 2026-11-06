@@ -88,8 +88,8 @@ function Stage({ p, lang }) {
         style={{ opacity: score, transform: `translateY(${(1 - score) * 16}px) scale(${0.96 + score * 0.04})` }}
       >
         <svg viewBox="0 0 80 80" className="w-16 h-16 -rotate-90">
-          <circle cx="40" cy="40" r="34" fill="none" stroke="#e3e8ee" strokeWidth="8" />
-          <circle cx="40" cy="40" r="34" fill="none" stroke="#635bff" strokeWidth="8" strokeLinecap="round"
+          <circle cx="40" cy="40" r="34" fill="none" stroke="#e8e8ed" strokeWidth="8" />
+          <circle cx="40" cy="40" r="34" fill="none" stroke="#0071e3" strokeWidth="8" strokeLinecap="round"
             strokeDasharray={circonference} strokeDashoffset={circonference * (1 - (score * SCORE) / 100)} />
         </svg>
         <div>

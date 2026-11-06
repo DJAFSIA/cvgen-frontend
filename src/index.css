@@ -7,7 +7,7 @@
   ::selection { background: #0071e3; color: #fff; }
   body { @apply bg-white text-body font-sans; }
   h1, h2, h3, h4 { @apply text-ink; letter-spacing: -0.022em; }
-  :focus-visible { outline: 2px solid #635bff; outline-offset: 2px; }
+  :focus-visible { outline: 2px solid #0071e3; outline-offset: 2px; }
 }
 
 @layer components {

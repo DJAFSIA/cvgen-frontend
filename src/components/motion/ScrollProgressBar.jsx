@@ -23,7 +23,7 @@ export default function ScrollProgressBar() {
   if (reduit) return null
   return (
     <div className="absolute left-0 right-0 bottom-[-1px] h-[2px] pointer-events-none" aria-hidden="true">
-      <div className="h-full origin-left" style={{ transform: `scaleX(${p})`, background: 'linear-gradient(90deg,#635bff,#c95bff,#ff8a4c)' }} />
+      <div className="h-full origin-left" style={{ transform: `scaleX(${p})`, background: 'linear-gradient(90deg,#0894ff,#c959dd,#ff9004)' }} />
     </div>
   )
 }

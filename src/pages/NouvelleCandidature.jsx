@@ -38,9 +38,9 @@ function ScoreRing({ score = 0 }) {
   return (
     <div className="relative grid place-items-center w-32 h-32">
       <svg viewBox="0 0 120 120" className="w-32 h-32 -rotate-90" aria-hidden="true">
-        <circle cx="60" cy="60" r="52" stroke="#e3e8ee" strokeWidth="9" fill="none" />
+        <circle cx="60" cy="60" r="52" stroke="#e8e8ed" strokeWidth="9" fill="none" />
         <circle
-          cx="60" cy="60" r="52" stroke="#635bff" strokeWidth="9" fill="none" strokeLinecap="round"
+          cx="60" cy="60" r="52" stroke="#0071e3" strokeWidth="9" fill="none" strokeLinecap="round"
           strokeDasharray={circumference} strokeDashoffset={circumference * (1 - value / 100)}
           style={{ transition: 'stroke-dashoffset 1s ease' }}
         />
