@@ -77,7 +77,7 @@ function DocumentPreview({ title, content }) {
 }
 
 export default function NouvelleCandidature() {
-  const { t } = useI18n()
+  const { t, lang } = useI18n()
   const [url, setUrl] = useState('')
   const [contenu, setContenu] = useState('')
   const [modele, setModele] = useState('classique')
@@ -111,10 +111,11 @@ export default function NouvelleCandidature() {
     setAlignement(null)
     setReponses({})
     try {
-      const res = await offreAPI.soumettre({ url_source: url.trim() || null, contenu_brut: contenu })
+      // l'analyse et les questions sont redigees dans la langue de l'interface
+      const res = await offreAPI.soumettre({ url_source: url.trim() || null, contenu_brut: contenu, langue: lang })
       setAnalyse(res.data)
       setBusy('questions')
-      const q = await offreAPI.questionsAlignement(res.data.id)
+      const q = await offreAPI.questionsAlignement(res.data.id, lang)
       setAlignement(q.data)
     } catch (err) {
       setError(errorMessage(err, t, 'apply.analyseError'))

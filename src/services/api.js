@@ -93,7 +93,7 @@ export const offreAPI = {
   list: () => api.get('/offre/'),
   get: (id) => api.get(`/offre/${id}`),
   extraire: (url) => api.post('/offre/extraire', { url }),
-  questionsAlignement: (id) => api.post(`/offre/${id}/questions-alignement`),
+  questionsAlignement: (id, langue) => api.post(`/offre/${id}/questions-alignement`, { langue }),
 }
 
 export const candidatureAPI = {
