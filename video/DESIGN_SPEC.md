@@ -136,3 +136,8 @@ des bruitages) : `analyse/mesures-audio-revue-v3.txt`.
   poussée réelle du score avec envol sur le temps 32, sons de la puce sur le contact, bruitages
   couverts remontés, une seule lueur au final, extraits du final sans rognure, textes à 34 px au moins,
   pages des modèles sans tranche crénelée, rendu JPEG 95 / CRF 16 / BT.709.
+- **Contre-revue v4 (22/11/2026)** : `analyse/contre-revue-v4.md`. Les 13 corrections sont confirmées ;
+  trois défauts nouveaux corrigés ensuite : caméra des questions en un seul mouvement continu (plus
+  d'à-coups), tige « Rédigés en » fixe (phrase centrée sur le dernier mot), vue de départ du score sur la
+  page entière (plus de bord de capture). Aussi : filets de l'offre dans l'interligne (ils ne barrent
+  plus le texte), champs du profil sans double bordure, questions à 5 % des bords.

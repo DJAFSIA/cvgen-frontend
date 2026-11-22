@@ -1,12 +1,14 @@
 // Plan 5 : questions de l'IA (carte ai-stream-response). Le diagnostic arrive d'abord (repere 18,
 // 12 i) et se lit ; puis chaque question se pose dans son emplacement reel (reperes 42 + 0/16/30/42…,
 // de plus en plus rapproches), la pastille d'etat suit 3 i plus tard. Cadrage serre pour que le texte
-// se lise une fois le film integre a la page (≈ 28 px) : la camera descend avec chaque nouvelle
-// question, comme un fil de reponse qui defile. Une seule pulsation a la fin, puis immobilite.
+// se lise une fois le film integre a la page (≈ 28 px) : la camera descend d'un seul mouvement
+// continu, lent au depart et a l'arrivee, pendant que les questions arrivent (contre-revue v4 :
+// un segment par question donnait quatre a-coups). Une seule pulsation a la fin, puis immobilite.
 import React from 'react';
 import { AbsoluteFill, Easing, interpolate, useCurrentFrame } from 'remotion';
 import { LAYOUTS, tex } from '../layout';
 import { Morceau, PageCam, type Cle } from '../lib/PageCam';
+import { CAMERA } from '../lib/motion';
 import { C } from '../lib/theme';
 import type { Lang } from '../textes';
 
@@ -35,29 +37,28 @@ export const Questions: React.FC<{ lang: Lang }> = ({ lang }) => {
   const f = useCurrentFrame();
   const L = LAYOUTS[lang].analyse;
   const Q = L.questions;
-  // Zoom de lecture : la colonne de texte remplit l'ecran ; bande utile au-dessus du sous-titre
-  const zoom = Math.min(2.2, 1840 / Q[0].w);
+  // Zoom de lecture : la colonne de texte remplit l'ecran a 5 % des bords ; bande utile au-dessus du sous-titre
+  const zoom = Math.min(2.1, 1728 / Q[0].w);
   const cx = Q[0].x + Q[0].w / 2;
   const centreUtile = 450; // centre (ecran) de la bande libre au-dessus du sous-titre
   const viser = (haut: number, bas: number) => (haut + bas) / 2 + (540 - centreUtile) / zoom;
   const debut = viser(L.titreAffiner.y - 10, L.diagnostic.y + L.diagnostic.h + 30);
+  // de la synthese jusqu'aux deux dernieres questions, en un seul mouvement
+  const n = Q.length;
+  const fin = viser(n > 1 ? Q[n - 2].y : L.diagnostic.y, Q[n - 1].y + Q[n - 1].h);
   const keys: Cle[] = [
     { frame: 0, cx, cy: debut, zoom: zoom * 1.03 },
     { frame: repereQuestion(0) - 4, cx, cy: debut, zoom },
+    { frame: repereQuestion(n - 1) + 16, cx, cy: fin, zoom },
   ];
-  // la camera rejoint chaque nouvelle question (avec la precedente, ou le diagnostic, au-dessus)
-  Q.forEach((q, i) => {
-    const prec = i === 0 ? L.diagnostic : Q[i - 1];
-    keys.push({ frame: repereQuestion(i) + 14, cx, cy: viser(prec.y, q.y + q.h), zoom });
-  });
   const resume = interpolate(f, [18, 30], [0, 1], { ...cl, easing: EASE });
-  const fin = repereQuestion(Q.length - 1) + 12 + 6;
-  const pulsation = interpolate(f, [fin, fin + 5, fin + 10], [0, 0.55, 0], cl);
+  const finCascade = repereQuestion(Q.length - 1) + 12 + 6;
+  const pulsation = interpolate(f, [finCascade, finCascade + 5, finCascade + 10], [0, 0.55, 0], cl);
   const fond = tex(lang, 'analyse-sans-questions');
   const plein = tex(lang, 'analyse');
   return (
     <AbsoluteFill>
-      <PageCam src={fond} pageH={L.pageH} keys={keys} ease={EASE}>
+      <PageCam src={fond} pageH={L.pageH} keys={keys} ease={CAMERA}>
         <div style={{ position: 'absolute', inset: 0, clipPath: `inset(0 ${100 - 100 * resume}% 0 0)` }}>
           <div style={{ opacity: resume, transform: `translateY(${10 * (1 - resume)}px)` }}>
             <Morceau src={plein} pageH={L.pageH} r={L.diagnostic} pad={3} />

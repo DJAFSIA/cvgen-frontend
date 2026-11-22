@@ -1,7 +1,8 @@
 // Plan 7 : le CV et la lettre s'ecrivent (carte document-typewriter-reveal). Les blocs des deux
 // colonnes s'ecrivent par paires (le n-ieme bloc du CV avec le n-ieme de la lettre) ; un cache blanc
-// se retire de gauche a droite, un seul curseur bleu par colonne ; la camera part du nom en gros
-// plan et s'ouvre sur la page entiere (image 64), puis respire a peine.
+// se retire de gauche a droite ; un seul curseur bleu, sur le bloc le plus recent (le CV d'abord) ;
+// les puces des listes sont masquees avec leur texte ; la camera part du nom en gros plan, s'ouvre sur
+// la page entiere (image 64) puis reste immobile.
 import React from 'react';
 import { AbsoluteFill, Easing, interpolate, useCurrentFrame } from 'remotion';
 import { cadrer, LAYOUTS, tex, union } from '../layout';

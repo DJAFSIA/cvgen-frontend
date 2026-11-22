@@ -87,9 +87,9 @@ export const Offre: React.FC<{ lang: Lang }> = ({ lang }) => {
               {/* filet discret du mot vers le centre de SON etiquette : horizontal, puis coude si les
                   etiquettes ont du s'empiler ; il se trace de gauche a droite */}
               {(() => {
-                const wy = m.y + m.h / 2;
+                const wy = m.y + m.h + 3; // dans l'interligne, sous le mot : le filet ne barre pas le texte
                 const ly = etiquettes[i] + 17;
-                const x0 = bx + bw + 6;
+                const x0 = bx + bw;
                 const x2 = ex - 4;
                 const x1 = x2 - 34;
                 const haut = Math.min(wy, ly) - 4;

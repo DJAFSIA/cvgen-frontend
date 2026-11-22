@@ -56,7 +56,7 @@ export const Profil: React.FC<{ lang: Lang }> = ({ lang }) => {
             {/* le texte d'exemple de la page vide s'efface sous la valeur qui arrive */}
             <div style={{ position: 'absolute', left: champ.x + 2, top: champ.y + 2, width: champ.w - 4, height: champ.h - 4, borderRadius: 10, background: '#fff', opacity: Math.min(1, k * 4) }} />
             <div style={{ position: 'absolute', inset: 0, opacity: Math.min(1, k * 2), transform: `translateY(${lerp(k, MONTEE, 0)}px)` }}>
-              <Morceau src={tex(lang, 'profil-plein')} pageH={L.pageH} r={champ} pad={2} />
+              <Morceau src={tex(lang, 'profil-plein')} pageH={L.pageH} r={champ} pad={-2} />
             </div>
           </React.Fragment>
         );

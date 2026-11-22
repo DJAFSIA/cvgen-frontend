@@ -1,7 +1,7 @@
 // Plan 8 : langues (carte vertical-word-roll-blur-cycle). Tige fixe, roue de 4 mots, 3 changements
 // (fenetres 0,16 / 0,36 / 0,56, chacune 0,11), courbe 0,7·outQuint + 0,3·outBack, flou vertical des
-// lignes voisines, teinte bleue seulement a l'arret ; fondu du groupe en fin de plan. La largeur de la
-// roue suit la largeur mesuree du mot affiche : la phrase reste centree sur ce qu'on lit.
+// lignes voisines, teinte bleue seulement a l'arret ; fondu du groupe en fin de plan. Tige fixe (fiche) :
+// la roue a la largeur mesuree du dernier mot, celui qui reste affiche, et la phrase est centree sur lui.
 import React from 'react';
 import { AbsoluteFill, useCurrentFrame, useVideoConfig } from 'remotion';
 import { clamp01, E, mixHex, seg } from '../lib/motion';
@@ -40,12 +40,8 @@ export const Langues: React.FC<{ lang: Lang }> = ({ lang }) => {
     p += 0.7 * E.outQuint(u) + 0.3 * E.outBack(u);
   }
   const style: React.CSSProperties = { fontFamily: POLICE, fontSize: TAILLE, fontWeight: 700, letterSpacing: `${INTERLETTRE}em` };
-  // Largeur de la roue : celle du mot affiche, interpolee pendant chaque changement
-  const n = tx.langues.length;
-  const pc = Math.min(Math.max(p, 0), n - 1);
-  const i0 = Math.floor(pc);
-  const i1 = Math.min(n - 1, i0 + 1);
-  const largeur = mesurer(tx.langues[i0]) + (mesurer(tx.langues[i1]) - mesurer(tx.langues[i0])) * (pc - i0) + 12;
+  // Largeur fixe de la roue : celle du dernier mot (la tige ne bouge jamais)
+  const largeur = mesurer(tx.langues[tx.langues.length - 1]) + 12;
   return (
     <AbsoluteFill style={{ background: '#f5f5f7', alignItems: 'center', justifyContent: 'center' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 44, opacity: 1 - seg(t, 0.9, 0.985) * 0.999 }}>

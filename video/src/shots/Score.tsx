@@ -51,7 +51,7 @@ export const Score: React.FC<{ lang: Lang }> = ({ lang }) => {
   const mcy = carte.y + carte.h / 2;
   // Vue de depart : toute la section d'analyse (en-tete, carte, listes, conseil), zoom 1 au plus
   const section = { x: carte.x, y: carte.y - 70, w: L.listes[0].x + L.listes[0].w - carte.x, h: L.affiner.y - 20 - (carte.y - 70) };
-  const vue = cadrer(section, { hautUtile: 820, centreY: 480, max: 1 });
+  const vue = { ...cadrer(section, { hautUtile: 820, centreY: 480, max: 1 }), cx: 960 }; // page entiere : aucun bord de capture visible
   const zoomPres = Math.min(1.6, 700 / carte.h);
   const keys: Cle[] = [
     { frame: 0, cx: vue.cx, cy: vue.cy, zoom: vue.zoom, rotX: 0, rotY: 0, rotZ: 0, persp: 1200 },
