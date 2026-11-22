@@ -1,7 +1,7 @@
-import { useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 import { AlertCircle, CheckCircle2, Download, Lightbulb, Link2, RotateCcw, Sparkles, Wand2 } from 'lucide-react'
-import { offreAPI, candidatureAPI, errorMessage } from '../services/api'
+import { offreAPI, candidatureAPI, paysAPI, errorMessage } from '../services/api'
 import { downloadDocument } from '../services/download'
 import { useI18n } from '../i18n'
 import { Alert, Button, Card, Field, Input, Spinner, Textarea } from '../components/ui'
@@ -11,6 +11,9 @@ import ErrorAlert from '../components/ErrorAlert'
 const MODELES = ['classique', 'moderne', 'ats']
 const LANGUES_DOCUMENTS = ['auto', 'fr', 'en', 'es', 'de', 'pt', 'it']
 const MIN_CHARS = 30
+
+// Fiches pays du serveur ; liste vide si elles ne sont pas disponibles (le pays detecte s'applique alors)
+const lirePays = () => paysAPI.list().then((res) => res.data).catch(() => [])
 
 function Stepper({ current, labels }) {
   return (
@@ -82,6 +85,8 @@ export default function NouvelleCandidature() {
   const [contenu, setContenu] = useState('')
   const [modele, setModele] = useState('classique')
   const [langueDocs, setLangueDocs] = useState('auto')
+  const [listePays, setListePays] = useState([])
+  const [pays, setPays] = useState('autre')
   const [analyse, setAnalyse] = useState(null)
   const [alignement, setAlignement] = useState(null)
   const [reponses, setReponses] = useState({})
@@ -90,6 +95,16 @@ export default function NouvelleCandidature() {
   const [error, setError] = useState('')
 
   const questions = alignement?.questions || []
+
+  // Fiches pays (usages du CV et de la lettre) ; sans elles, le serveur applique le pays detecte
+  useEffect(() => {
+    lirePays().then(setListePays)
+  }, [])
+  const paysTries = useMemo(
+    () => [...listePays].sort((a, b) => a.nom[lang].localeCompare(b.nom[lang], lang)),
+    [listePays, lang],
+  )
+  const fichePays = listePays.find((p) => p.code === pays)
   const step = resultat ? 2 : analyse ? 1 : 0
 
   const extraire = async () => {
@@ -114,6 +129,8 @@ export default function NouvelleCandidature() {
       // l'analyse et les questions sont redigees dans la langue de l'interface
       const res = await offreAPI.soumettre({ url_source: url.trim() || null, contenu_brut: contenu, langue: lang })
       setAnalyse(res.data)
+      setPays(res.data.pays || 'autre')
+      if (listePays.length === 0) lirePays().then(setListePays) // nouvel essai si le premier chargement a echoue
       setBusy('questions')
       const q = await offreAPI.questionsAlignement(res.data.id, lang)
       setAlignement(q.data)
@@ -133,7 +150,7 @@ export default function NouvelleCandidature() {
         .filter((item) => item.reponse)
       const created = await candidatureAPI.create(analyse.id)
       const id = created.data.id
-      const gen = await candidatureAPI.generer(id, payload, modele, langueDocs)
+      const gen = await candidatureAPI.generer(id, payload, modele, langueDocs, pays)
       setResultat({ id, cv: gen.data.cv, lettre: gen.data.lettre })
     } catch (err) {
       setError(errorMessage(err, t, 'apply.generateError'))
@@ -155,7 +172,7 @@ export default function NouvelleCandidature() {
   }
 
   const recommencer = () => {
-    setUrl(''); setContenu(''); setAnalyse(null); setAlignement(null)
+    setUrl(''); setContenu(''); setAnalyse(null); setAlignement(null); setPays('autre')
     setReponses({}); setResultat(null); setError('')
   }
 
@@ -245,6 +262,55 @@ export default function NouvelleCandidature() {
                     ))}
                   </select>
                 </Field>
+
+                {paysTries.length > 0 && (
+                  <div>
+                    <Field
+                      id="pays"
+                      label={t('apply.country')}
+                      hint={analyse.pays && analyse.pays !== 'autre' && pays === analyse.pays ? t('apply.countryDetected') : t('apply.countryHint')}
+                    >
+                      <select
+                        id="pays"
+                        value={pays}
+                        onChange={(e) => setPays(e.target.value)}
+                        className="w-full sm:w-72 h-10 bg-white border border-line rounded-md px-3 text-sm text-ink focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/20"
+                      >
+                        {paysTries.map((p) => (
+                          <option key={p.code} value={p.code}>{p.nom[lang]}</option>
+                        ))}
+                        <option value="autre">{t('apply.countryOther')}</option>
+                      </select>
+                    </Field>
+                    {fichePays && (
+                      <div className="mt-3 rounded-lg bg-surface px-4 py-3">
+                        <ul className="space-y-1.5 text-sm text-body">
+                          {fichePays.resume[lang].map((point) => (
+                            <li key={point} className="flex gap-2">
+                              <CheckCircle2 size={15} className="mt-0.5 shrink-0 text-brand" aria-hidden="true" />
+                              {point}
+                            </li>
+                          ))}
+                        </ul>
+                        <p className="mt-2.5 text-xs text-muted">
+                          {fichePays.fiabilite === 'officielle' ? t('apply.countryOfficial') : t('apply.countryUsage')}
+                          {', '}
+                          {t('apply.countryChecked', { date: new Intl.DateTimeFormat(lang, { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(fichePays.verifie_le)) })}
+                          {'. '}
+                          {t('apply.countrySources')}{' : '}
+                          {fichePays.sources.map((source, i) => (
+                            <span key={source.url}>
+                              {i > 0 && ' · '}
+                              <a href={source.url} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-ink" title={source.titre}>
+                                {new URL(source.url).hostname.replace(/^www\./, '')}
+                              </a>
+                            </span>
+                          ))}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                )}
 
                 <fieldset>
                   <legend className="text-[13px] font-medium text-ink mb-3">{t('apply.chooseTemplate')}</legend>

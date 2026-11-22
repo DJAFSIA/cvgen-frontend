@@ -96,14 +96,21 @@ export const offreAPI = {
   questionsAlignement: (id, langue) => api.post(`/offre/${id}/questions-alignement`, { langue }),
 }
 
+// Pays dont Apply connait les usages du CV et de la lettre (fiches du serveur)
+export const paysAPI = {
+  list: () => api.get('/pays/'),
+}
+
 export const candidatureAPI = {
   create: (offreId) => api.post('/candidature/', { offre_id: offreId }),
-  generer: (id, reponsesAlignement = [], modeleCv = 'classique', langueDocuments = 'auto') =>
+  // pays : code d'une fiche pays, « autre », ou null pour le pays detecte dans l'offre
+  generer: (id, reponsesAlignement = [], modeleCv = 'classique', langueDocuments = 'auto', pays = null) =>
     api.post(`/candidature/${id}/generer`, {
       modele_cv: modeleCv,
       langue_documents: langueDocuments,
       ton_lettre: 'professionnel',
       reponses_alignement: reponsesAlignement,
+      pays,
     }),
   list: () => api.get('/candidature/'),
   baseURL: api.defaults.baseURL,
