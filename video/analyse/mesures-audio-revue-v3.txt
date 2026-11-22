@@ -1,0 +1,93 @@
+Mesures brutes de la revue (apply-fr.mp4 du 16/11/2026 17:45, 1 269 images, AAC 48 kHz stéréo)
+Outils : ffmpeg (volumedetect, astats, ebur128, extraction PCM), numpy (corrélations FFT). Pas de scipy ni librosa.
+
+1. Niveaux globaux
+- volumedetect : mean -22,2 dB, max -1,1 dB ; astats : crête -1,10 dBFS, flat factor 0 (aucun écrêtage)
+- ebur128 : sonie intégrée -20,7 LUFS, LRA 6,6 LU, crête vraie -1,1 dBFS
+- Maximum RMS 400 ms : image 1165 (-10,4 dBFS, impact final) ; suivants : 484 (-14,6), 1037 (-16,5), 125 (-17,6), 1003 (-17,9), 1121 (-18,1)
+- Échantillon maximal : 0,881 à 38,862 s (image 1165,9)
+
+2. Musique (house-vibez.mp3)
+- Corrélation sortie / source : sortie(t) = source(t + 24,33 ms)
+  trimBefore du code = 2 images = 66,67 ms  =>  retard de sortie mesuré = 42,34 ms (≈ 2 032 échantillons ≈ 1,27 i)
+- Gain par image (moindres carrés) : 0,000 (i0), 0,130 (i15), 0,289 (i30), 0,299 (i60-i1218), 0,241 (i1230), 0,062 (i1260), 0,010 (i1268)
+  => conforme au code : 0 -> 0,3 sur 30 i, 0,3, -> 0 sur les 50 dernières images
+- Résidu sortie - musique modélisée, zone sans bruitage 2,0-3,3 s : -64,2 dB (sortie -19,9 dB) : modèle fiable
+- Grille du projet (121,998 BPM, temps 0 à 10,2 ms) vérifiée par corrélation d'un modèle de grosse caisse
+  (bande 40-160 Hz, modèle pris au temps 70) : période 491,776 ms (grille 491,811), écarts aux temps 16/32/64/76/86 :
+  +0,8 / +0,3 / -0,1 / -0,1 / -0,2 ms. (Modèles pris dans d'autres sections : sauts de ±21-27 ms entre sections,
+  dus au changement de timbre du motif grave, pas à une dérive.)
+- Aigus 6-14 kHz par temps (source) : -70 dB avant le temps 16, -36 dB du temps 16 au 30, -27 dB (31), -21 dB (32 et suivants)
+  => « la texture s'étoffe au temps 32 » confirmé.
+
+3. Coupes (image de coupe - instant du temps dans la sortie), en images
+  profil   t7   i103   +0,14
+  offre    t18  i266   +0,85
+  score    t29  i428   +0,55
+  questions t39 i575   +0,00
+  titre    t49  i723   +0,46
+  documents t53 i782   +0,44
+  langues  t61  i900   +0,41
+  modeles  t69  i1018  +0,37
+  final    t76  i1121  +0,09
+  => toutes <= 1,5 i ; décalage systématique moyen +0,37 i (arrondi de trimBefore 1,596 -> 2 i, plus arrondi de beatF)
+- Envol de la carte score : début image 476 (plan 48) ; temps 32 dans la sortie = image 471,7 => +4,3 i ; pic du souffle 480 => +8,3 i
+
+4. Bruitages (pic visé = colonne « pic » de Sons.tsx ; début et gain mesurés par corrélation sur le résidu)
+ fichier                  pic visé  début prévu  début mesuré  retard sortie  pic réel  écart   SFX/musique large bande  meilleure bande tiers d'octave
+ transition-soft            18,00      4          5,27        42,3 ms       18,89    +0,89      +6,3 dB    3,2-4 kHz +65 dB
+ whoosh-fast (PDF)         125,00    102        103,28        42,7 ms      124,93    -0,07      +1,3 dB    4-5 kHz +68 dB
+ switch-click-quick        125,00    123        124,28        42,7 ms      124,46    -0,54      +2,8 dB    6,3-8 kHz +69 dB
+ swoosh-quick (coord.)     129,00    119        120,29        43,0 ms      129,16    +0,16      +1,9 dB
+ swoosh-quick (parcours)   185,00    175        176,27        42,3 ms      185,14    +0,14      -3,1 dB
+ transition-soft (offre)   278,00    264        265,28        42,7 ms      278,90    +0,90      +8,0 dB
+ click-camera (cadre 1)    294,53    287        288,29        43,0 ms      294,11    -0,42      +2,6 dB
+ camera-lens-shutter (2)   326,42    324        325,28        42,7 ms      326,00    -0,43      -8,2 dB    1,6-2 kHz +43 dB
+ click-camera (3)          334,47    327        328,28        42,7 ms      334,10    -0,38     -10,1 dB    8-10 kHz +26 dB
+ camera-lens-shutter (4)   342,52    340        341,27        42,3 ms      341,99    -0,54      -4,9 dB
+ click-camera (5)          350,57    343        344,27        42,3 ms      350,09    -0,49      -8,8 dB    12,7-16 kHz +35 dB
+ camera-lens-shutter (6)   358,62    356        357,29        43,0 ms      358,01    -0,62      -6,0 dB
+ click-camera (7)          366,67    359        360,29        43,0 ms      366,11    -0,57     -11,6 dB    12,7-16 kHz +15 dB (4/15 bandes > +6 dB)
+ air-woosh-deep            480,00    464        465,29        43,0 ms      479,95    -0,05      +4,3 dB
+ sparkle-wand              489,00    483        484,28        42,7 ms      489,21    +0,21       0,0 dB
+ transition-snap           558,00    553        554,27        42,3 ms      557,81    -0,19      +1,4 dB
+ transition-soft (quest.)  597,00    583        584,27        42,3 ms      597,89    +0,89      +0,8 dB
+ pop-electric x3           619/630/640  617/628/638  +1,27 i  42,3-43,0 ms  attaque à +0,5 i du début (2e transitoire à +2,9 i)  -7,1/-5,0/-3,3 dB
+ whoosh-fast (cascade)     659,00    636        637,28        42,7 ms      658,93    -0,07     -10,2 dB    2/15 bandes > +6 dB (voulu « très bas »)
+ swoosh-quick (titre)      729,00    719        720,29        43,0 ms      729,16    +0,16      +2,1 dB
+ typewriter-digital        788 (début)  787     788,27        42,3 ms      (son continu, 43 i)       -13,2 dB    1-1,26 kHz +11 dB (2/15 bandes > +6 dB)
+ switch-tap (langue 2)     926,00    924        925,28        42,7 ms      925,39    -0,61      -3,2 dB
+ switch-light (langue 3)   949,00    946        947,27        42,3 ms      949,21    +0,21      -5,5 dB
+ switch-tap (langue 4)     973,00    971        972,29        43,0 ms      972,40    -0,60      -4,7 dB
+ air-whoosh-powerful      1034,00   1026       1027,28        42,7 ms     1034,07    +0,07      +0,4 dB
+ swoosh-slow (riser)      1166,00   1101       1102,28        42,7 ms     1165,70    -0,30      voir §5
+ impact-deep-whoosh       1166,00   1148       1149,29        43,0 ms     1165,82 (crête absolue du fichier à 16,53 i)  +8,2 dB
+ sparkle-touch            1183,00   1168       1169,27        42,3 ms     1183,57    +0,57      -7,2 dB    12,7-16 kHz +28 dB
+ => retard de sortie 42,3-43,0 ms sur les 30 bruitages (concorde avec la constante 1,29 i de Sons.tsx)
+ => pics à -0,62 / +0,90 i de la cible (arrondi entier de « from » inclus)
+
+5. Riser (swoosh-slow, volume 0,4) contre musique, par tranches de 6 images
+  1102-1108 -41,4 dB | 1108-1114 -29,6 | 1114-1120 -28,0 | 1120-1126 -29,7 | 1126-1132 -25,9 | 1132-1138 -21,4
+  1138-1144 -18,3 | 1144-1150 -8,9 | 1150-1156 -4,0 | 1156-1162 -0,3 | 1162-1168 +2,0 | 1168-1174 -1,6
+  Coupure du riser à 39,009 s (image 1170,3) : aucun clic (énergie > 6 kHz stable à -41/-47 dB autour de la coupure)
+- Fins de bruitages coupés : camera-lens-shutter -104 à -107 dBFS, sparkle-wand -78, typewriter -82, impact (90 i) -87 : aucun arrêt audible
+
+6. Calage visuel de la puce PDF (plan Profil) : centre de l'icône rouge (y, en px)
+  112:237,1 113:258,9 114:271,9 115:280,8 116:283,5 117:283,3 118:281,4 120:276,8 122:271,4 124:268,4 125:268,3 (repos ≈ 268)
+  => passage par la position de repos entre 113 et 114, fond du rebond à 116, repos à 124
+  => souffle (pic 124,93) et clic (pic 124,46) : +9 à +11 i après le contact visuel
+  Courbe ATTERRISSAGE bezier(0.34, 1.4, 0.44, 1) : atteint 1 à 38 % de sa durée, dépassement maxi à 54 %.
+
+7. Mouvement d'image (corrélation de phase sous-pixel, px par image)
+- Questions 680-706 (immobile attendu) : 0,00 partout (contrôle)
+- Offre 386-420 : -0,01 px/i avec sauts de +0,37 / +0,44 px (accrochage au pixel, invisible)
+- Profil 228-243 : allers-retours +0,46 -0,60 +0,50 -0,27 -0,32 +0,59 ... (micro-vibration sous-pixel)
+- Documents 850-880 : -0,70 ... +0,65 +0,57 -0,29 ... (même phénomène pendant la « respiration »)
+
+8. Immobilité (différence d'image < 0,02 sur 0-255, vidéo réduite 480x270)
+- Ouverture : mot-symbole immobile 36 -> 97 (62 i) ; image entière immobile 71 -> 97 (27 i)
+- Titre : immobile 762 -> 776 (15 i), fondu 777-782
+- Questions : 676 -> 709 (34 i)
+- Langues : « six langues » 979 -> 1005 (27 i) ; entre deux changements : 908-918, 931-942, 955-965 (≈ 10-11 i)
+- Final : logo + adresse quasi immobiles 1202 -> 1257 (le fond pousse lentement par construction)
+- Images entièrement blanches (luminance 255) à chaque coupe : 103, 266, 428, 575, 723-726, 782, 900, 1018 ; flash avant le final, pic à 1120

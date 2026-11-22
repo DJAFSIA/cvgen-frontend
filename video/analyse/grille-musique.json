@@ -1,0 +1,19 @@
+{
+  "bpm": 121.99791670355506,
+  "T": 0.4918116769632639,
+  "t0": 0.010248377134717438,
+  "duree": 111.46448979591837,
+  "fichier": "public/audio/house-vibez.mp3",
+  "methode": "flux spectral (graves < 160 Hz + large bande), autocorrelation 90-150 BPM, peigne de phase, puis moindres carres sur les attaques graves a +-60 ms de chaque temps (scripts/analyse_musique.py)",
+  "date": "2026-11-16",
+  "residu_max_ms": 9,
+  "residu_rms_ms": 3.7,
+  "sections_mesures": {
+    "0-3": "graves seuls",
+    "4-7": "charleston entre (temps 16)",
+    "8-15": "texture pleine (temps 32)",
+    "16-23": "plus fort (temps 64)",
+    "24-31": "pont sans aigus (temps 96)"
+  },
+  "verification_revue_v3": "grille confirmee a +-1 ms aux temps 16, 32, 64, 76 et 86 sur le rendu (revue independante)"
+}

@@ -11,7 +11,7 @@ import { Button } from '../components/ui'
 import PricingCards from '../components/PricingCards'
 import HeroShowcase from '../components/landing/HeroShowcase'
 import Manifesto from '../components/landing/Manifesto'
-import StoryScroll from '../components/landing/StoryScroll'
+import FilmPresentation from '../components/landing/FilmPresentation'
 import BentoFeatures from '../components/landing/BentoFeatures'
 import LanguagesMarquee from '../components/landing/LanguagesMarquee'
 import TemplatesFan from '../components/landing/TemplatesFan'
@@ -90,7 +90,7 @@ export default function LandingPage() {
 
       <Manifesto />
 
-      <StoryScroll />
+      <FilmPresentation />
 
       <BentoFeatures />
 

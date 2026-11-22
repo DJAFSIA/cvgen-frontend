@@ -1,0 +1,23 @@
+{
+  "name": "apply-film",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Film en motion design « Comment ça marche » d'Apply (Remotion)",
+  "scripts": {
+    "studio": "remotion studio src/index.ts",
+    "capture": "node scripts/capture.mjs",
+    "render:fr": "remotion render src/index.ts ApplyFilm out/apply-fr.mp4 --props=props/fr.json",
+    "render:en": "remotion render src/index.ts ApplyFilm out/apply-en.mp4 --props=props/en.json"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.484",
+    "react": "19.2.7",
+    "react-dom": "19.2.7",
+    "remotion": "4.0.484"
+  },
+  "devDependencies": {
+    "@types/react": "19.2.17",
+    "puppeteer-core": "24.10.2",
+    "typescript": "6.0.3"
+  }
+}

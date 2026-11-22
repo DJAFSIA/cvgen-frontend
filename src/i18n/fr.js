@@ -305,6 +305,13 @@ export default {
     featTemplates: "3 modèles de CV, export PDF, toutes langues",
     featPayments: "Carte ou Mobile Money MTN / Orange",
   },
+  film: {
+    label: "Film de présentation d'Apply",
+    play: "Lire la vidéo",
+    pause: "Mettre la vidéo en pause",
+    soundOn: "Activer le son",
+    soundOff: "Couper le son",
+  },
   story: {
     "title": "De l'offre au CV sur mesure, sans rien réécrire vous-même",
     "steps": [

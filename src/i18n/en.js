@@ -305,6 +305,13 @@ export default {
     featTemplates: "3 CV templates, PDF export, any language",
     featPayments: "Card or MTN / Orange Mobile Money",
   },
+  film: {
+    label: "Apply presentation film",
+    play: "Play the video",
+    pause: "Pause the video",
+    soundOn: "Turn sound on",
+    soundOff: "Mute",
+  },
   story: {
     "title": "From job offer to tailored CV, without rewriting anything yourself",
     "steps": [

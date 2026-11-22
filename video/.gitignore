@@ -1,0 +1,6 @@
+node_modules/
+out/
+.remotion/
+scripts/.demo.json
+# Sons Mixkit : redistribution interdite (voir public/audio/LICENCES.md)
+public/audio/*.mp3
