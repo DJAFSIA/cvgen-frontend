@@ -1,19 +1,21 @@
 import { useEffect, useMemo, useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 import { AlertCircle, CheckCircle2, Download, Lightbulb, Link2, RotateCcw, Sparkles, Wand2 } from 'lucide-react'
-import { offreAPI, candidatureAPI, paysAPI, errorMessage } from '../services/api'
+import { offreAPI, candidatureAPI, paysAPI, profilAPI, errorMessage } from '../services/api'
+import { aEtatCivil } from '../services/profile'
 import { downloadDocument } from '../services/download'
 import { useI18n } from '../i18n'
 import { Alert, Button, Card, Field, Input, Spinner, Textarea } from '../components/ui'
 import TemplateMock from '../components/TemplateMock'
 import ErrorAlert from '../components/ErrorAlert'
 
-const MODELES = ['classique', 'moderne', 'ats']
+const MODELES = ['classique', 'moderne', 'ats', 'nord_americain', 'etat_civil']
 const LANGUES_DOCUMENTS = ['auto', 'fr', 'en', 'es', 'de', 'pt', 'it']
 const MIN_CHARS = 30
 
 // Fiches pays du serveur ; liste vide si elles ne sont pas disponibles (le pays detecte s'applique alors)
 const lirePays = () => paysAPI.list().then((res) => res.data).catch(() => [])
+const lireProfil = () => profilAPI.get().then((res) => res.data).catch(() => null)
 
 function Stepper({ current, labels }) {
   return (
@@ -83,10 +85,12 @@ export default function NouvelleCandidature() {
   const { t, lang } = useI18n()
   const [url, setUrl] = useState('')
   const [contenu, setContenu] = useState('')
-  const [modele, setModele] = useState('classique')
+  const [modeleChoisi, setModeleChoisi] = useState(null) // null : modele recommande pour le pays
   const [langueDocs, setLangueDocs] = useState('auto')
   const [listePays, setListePays] = useState([])
   const [pays, setPays] = useState('autre')
+  const [profil, setProfil] = useState(null)
+  const [choixPersonnels, setChoixPersonnels] = useState({}) // cases touchees par la personne
   const [analyse, setAnalyse] = useState(null)
   const [alignement, setAlignement] = useState(null)
   const [reponses, setReponses] = useState({})
@@ -100,11 +104,31 @@ export default function NouvelleCandidature() {
   useEffect(() => {
     lirePays().then(setListePays)
   }, [])
+  // Photo et etat civil du profil ; relus au retour sur l'onglet (ajoutes entre-temps dans Mon profil)
+  useEffect(() => {
+    const relire = () => lireProfil().then(setProfil)
+    relire()
+    window.addEventListener('focus', relire)
+    return () => window.removeEventListener('focus', relire)
+  }, [])
   const paysTries = useMemo(
     () => [...listePays].sort((a, b) => a.nom[lang].localeCompare(b.nom[lang], lang)),
     [listePays, lang],
   )
   const fichePays = listePays.find((p) => p.code === pays)
+
+  // Modeles proposes : celui avec photo et etat civil n'est pas montre la ou il est deconseille
+  const deconseille = fichePays?.photo === 'deconseillee'
+  const modeles = MODELES.filter((m) => m !== 'etat_civil' || !deconseille)
+  const recommande = fichePays?.modele_recommande
+  const modele = modeles.includes(modeleChoisi) ? modeleChoisi : recommande || 'classique'
+
+  // Cases « photo » et « etat civil » : cochees d'avance seulement si c'est l'usage attendu dans ce pays
+  const aPhoto = Boolean(profil?.a_photo)
+  const aIdentite = aEtatCivil(profil)
+  const avecPhoto = modele === 'etat_civil' && aPhoto && (choixPersonnels.photo ?? fichePays?.photo === 'attendue')
+  const avecEtatCivil = modele === 'etat_civil' && aIdentite
+    && (choixPersonnels.identite ?? (fichePays ? Object.values(fichePays.etat_civil).includes('attendue') : false))
   const step = resultat ? 2 : analyse ? 1 : 0
 
   const extraire = async () => {
@@ -130,6 +154,7 @@ export default function NouvelleCandidature() {
       const res = await offreAPI.soumettre({ url_source: url.trim() || null, contenu_brut: contenu, langue: lang })
       setAnalyse(res.data)
       setPays(res.data.pays || 'autre')
+      setChoixPersonnels({})
       if (listePays.length === 0) lirePays().then(setListePays) // nouvel essai si le premier chargement a echoue
       setBusy('questions')
       const q = await offreAPI.questionsAlignement(res.data.id, lang)
@@ -150,8 +175,8 @@ export default function NouvelleCandidature() {
         .filter((item) => item.reponse)
       const created = await candidatureAPI.create(analyse.id)
       const id = created.data.id
-      const gen = await candidatureAPI.generer(id, payload, modele, langueDocs, pays)
-      setResultat({ id, cv: gen.data.cv, lettre: gen.data.lettre })
+      const gen = await candidatureAPI.generer(id, { reponses: payload, modele, langue: langueDocs, pays, avecPhoto, avecEtatCivil })
+      setResultat({ id, cv: gen.data.cv, lettre: gen.data.lettre, affichage: gen.data.affichage })
     } catch (err) {
       setError(errorMessage(err, t, 'apply.generateError'))
     } finally {
@@ -172,7 +197,7 @@ export default function NouvelleCandidature() {
   }
 
   const recommencer = () => {
-    setUrl(''); setContenu(''); setAnalyse(null); setAlignement(null); setPays('autre')
+    setUrl(''); setContenu(''); setAnalyse(null); setAlignement(null); setPays('autre'); setModeleChoisi(null); setChoixPersonnels({})
     setReponses({}); setResultat(null); setError('')
   }
 
@@ -273,7 +298,7 @@ export default function NouvelleCandidature() {
                       <select
                         id="pays"
                         value={pays}
-                        onChange={(e) => setPays(e.target.value)}
+                        onChange={(e) => { setPays(e.target.value); setChoixPersonnels({}) }}
                         className="w-full sm:w-72 h-10 bg-white border border-line rounded-md px-3 text-sm text-ink focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/20"
                       >
                         {paysTries.map((p) => (
@@ -314,16 +339,41 @@ export default function NouvelleCandidature() {
 
                 <fieldset>
                   <legend className="text-[13px] font-medium text-ink mb-3">{t('apply.chooseTemplate')}</legend>
-                  <div className="grid grid-cols-3 gap-3 sm:gap-5 max-w-xl">
-                    {MODELES.map((m) => (
-                      <label key={m} className={`cursor-pointer rounded-xl2 border p-2 transition ${modele === m ? 'border-brand ring-2 ring-brand/25 bg-brand-soft/40' : 'border-line hover:border-slate-300'}`}>
-                        <input type="radio" name="modele" value={m} checked={modele === m} onChange={() => setModele(m)} className="sr-only" />
+                  <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+                    {modeles.map((m) => (
+                      <label key={m} className={`cursor-pointer rounded-xl2 border p-2 transition has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-brand ${modele === m ? 'border-brand ring-2 ring-brand/25 bg-brand-soft/40' : 'border-line hover:border-slate-300'}`}>
+                        <input type="radio" name="modele" value={m} checked={modele === m} onChange={() => setModeleChoisi(m)} className="sr-only" />
                         <TemplateMock kind={m} />
-                        <span className="block mt-2 text-center text-sm font-medium text-ink">{t(`landing.tpl.${m}`)}</span>
+                        <span className="block mt-2 text-center text-[13px] leading-tight font-medium text-ink">{t(`landing.tpl.${m}`)}</span>
+                        {m === recommande && <span className="block mt-1 text-center text-[11px] font-semibold text-brand">{t('apply.recommended')}</span>}
                       </label>
                     ))}
                   </div>
+                  {deconseille && <p className="mt-2.5 text-xs text-muted">{t('apply.photoDiscouraged')}</p>}
                 </fieldset>
+
+                {modele === 'etat_civil' && (
+                  <fieldset className="rounded-lg bg-surface px-4 py-4">
+                    <legend className="sr-only">{t('apply.personalTitle')}</legend>
+                    <p className="text-[13px] font-medium text-ink">{t('apply.personalTitle')}</p>
+                    {[
+                      { cle: 'photo', possible: aPhoto, coche: avecPhoto, texte: t('apply.addPhoto'), manque: t('apply.noPhoto') },
+                      { cle: 'identite', possible: aIdentite, coche: avecEtatCivil, texte: t('apply.addIdentity'), manque: t('apply.noIdentity') },
+                    ].map((c) => (
+                      <label key={c.cle} className={`mt-2.5 flex items-start gap-2.5 text-sm ${c.possible ? 'text-body cursor-pointer' : 'text-muted'}`}>
+                        <input
+                          type="checkbox" checked={c.coche} disabled={!c.possible} className="mt-1 accent-brand"
+                          onChange={(e) => setChoixPersonnels({ ...choixPersonnels, [c.cle]: e.target.checked })}
+                        />
+                        <span>
+                          {c.texte}
+                          {!c.possible && <> {c.manque} <a href="/profil" target="_blank" rel="noopener" className="text-brand underline underline-offset-2">{t('apply.openProfile')}</a></>}
+                        </span>
+                      </label>
+                    ))}
+                    <p className="mt-3 text-xs text-muted">{t('apply.personalPrivacy')}</p>
+                  </fieldset>
+                )}
 
                 <Button size="lg" className="w-full" onClick={generer} loading={busy === 'generate'}>
                   <Wand2 size={18} aria-hidden="true" />{busy === 'generate' ? t('apply.generating') : t('apply.generate')}
@@ -344,6 +394,12 @@ export default function NouvelleCandidature() {
               <Button variant="secondary" onClick={recommencer}><RotateCcw size={16} aria-hidden="true" />{t('apply.startOver')}</Button>
             </div>
           </Card>
+
+          {(resultat.affichage?.photo || resultat.affichage?.etat_civil) && (
+            <p className="text-sm text-muted">
+              {t(resultat.affichage.photo && resultat.affichage.etat_civil ? 'apply.pdfAddsBoth' : resultat.affichage.photo ? 'apply.pdfAddsPhoto' : 'apply.pdfAddsIdentity')}
+            </p>
+          )}
 
           <div className="grid lg:grid-cols-2 gap-6">
             <DocumentPreview title={t('apply.previewCv')} content={resultat.cv} />

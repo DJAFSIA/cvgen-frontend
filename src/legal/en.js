@@ -116,7 +116,8 @@ export default {
           liste: [
             'Account: first name, last name, email, password (stored only in irreversibly encrypted form), language, sign-up and last sign-in dates, date you accepted the terms, and your Google identifier if you use “Continue with Google”.',
             'Profile and CV: contact details, experience, education, skills and languages extracted from your CV or entered by you. The imported PDF file is not kept: it is read and then deleted immediately.',
-            'Job offers and applications: text and link of the offers, analyses, answers to questions, generated CVs and letters.',
+            'Photo and personal details, optional: photo, date and place of birth, nationality, marital status, number of children and residence permit, only if you add them to your profile. The photo is cropped and re-saved on upload: information hidden in the file (where it was taken, device) is erased.',
+            'Job offers and applications: text and link of the offers, analyses, target country, answers to questions, generated CVs and letters.',
             'Subscription and payments: plan, dates, amounts, currency and payment references. Your card or Mobile Money numbers are entered at Stripe or Flutterwave: we never have access to them.',
             'Usage: number of applications generated, job offers analysed and CVs imported each month.',
             'Technical data: IP address, used to prevent abuse, and technical logs from our hosting providers.',
@@ -129,6 +130,7 @@ export default {
           titre: 'Why we process it',
           liste: [
             'To provide the service (account, job offer analysis, generation and export of documents): performance of our contract with you.',
+            'To add your photo and personal details to a CV, in countries where it is customary: your choice, made for each application. You can change or delete them at any time in your profile.',
             'To manage payments, invoicing and accounting: performance of the contract and legal obligations.',
             'To keep the service secure and prevent abuse (email confirmation, usage limits): our legitimate interest in protecting the service and its users.',
             'To send you account emails (confirmation, password, security): performance of the contract. We do not send you marketing emails without your consent.',
@@ -139,6 +141,7 @@ export default {
           paragraphes: [
             'To analyse a job offer and write your documents, the text of your profile, the offer and your answers is sent to an AI model provider: Google, Groq, OpenRouter, Mistral AI or Anthropic, depending on availability.',
             'This data is used only to produce the result you asked for. We use offerings in which it is not used to train these providers’ models.',
+            'The photo and personal details in your profile are never sent to an AI provider: our servers add them directly to the PDF.',
             'No decision with legal effects on you is made automatically: the match score is an indication for you alone.',
           ],
         },
@@ -163,6 +166,7 @@ export default {
           titre: 'How long we keep data',
           liste: [
             'Account, profile, job offers and applications: as long as your account exists.',
+            'Photo and personal details: until you delete them from your profile, or until your account is deleted. They are not copied into saved documents: once deleted, they no longer appear in later downloads.',
             'After your account is deleted: immediate erasure from our database. Backup copies are erased at the latest when their retention period at our database host expires.',
             'Payments: 10 years, for accounting obligations, no longer linked to your identity once the account is deleted.',
             'Email confirmation and password reset links: 48 hours and 1 hour.',

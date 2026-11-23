@@ -1,8 +1,8 @@
-import { Check, FileDown } from 'lucide-react'
+import { Check, FileDown, Globe } from 'lucide-react'
 import { useI18n } from '../../i18n'
 import Reveal from '../motion/Reveal'
 
-/** Grille "bento" : cinq tuiles de tailles differentes, chacune illustrant sa fonctionnalite. */
+/** Grille "bento" : six tuiles de tailles differentes, chacune illustrant sa fonctionnalite. */
 export default function BentoFeatures() {
   const { t } = useI18n()
   const [score, questions, langues, honnete, , pdf] = t('landing.features')
@@ -61,6 +61,20 @@ export default function BentoFeatures() {
           <Reveal variant="scale" delay={200} className={`${tuile} md:col-span-2 min-h-[300px]`}>
             {titre(pdf)}
             <FileDown size={56} strokeWidth={1.4} className="absolute right-8 bottom-8 text-brand" aria-hidden="true" />
+          </Reveal>
+
+          {/* Pays : usages du CV et de la lettre */}
+          <Reveal variant="scale" className={`${tuile} md:col-span-6 md:grid md:grid-cols-2 md:gap-10 md:items-center`}>
+            <div>
+              <Globe size={34} strokeWidth={1.5} className="text-brand" aria-hidden="true" />
+              <h3 className="mt-4 text-2xl font-semibold tracking-tight">{t('landing.countriesTitle')}</h3>
+              <p className="mt-2 text-[17px] leading-relaxed text-muted">{t('landing.countriesText')}</p>
+            </div>
+            <ul className="mt-6 md:mt-0 flex flex-wrap gap-2.5">
+              {t('landing.countries').map((nom) => (
+                <li key={nom} className="rounded-full bg-white px-4 py-2 text-[15px] font-medium text-ink shadow-card">{nom}</li>
+              ))}
+            </ul>
           </Reveal>
 
         </div>

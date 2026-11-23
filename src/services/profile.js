@@ -22,10 +22,16 @@ function listeEnTexte(valeur, formateur) {
   return typeof valeur === 'string' ? valeur : formateur(valeur)
 }
 
+// Etat civil facultatif : jamais transmis a l'IA, place sur le CV seulement si la personne le choisit
+export const ETAT_CIVIL = ['date_naissance', 'lieu_naissance', 'nationalite', 'situation_familiale', 'enfants', 'permis_sejour']
+
 export const FIELDS = [
   'nom_complet_cv', 'email_cv', 'telephone', 'adresse', 'titre_profil',
-  'experiences', 'formations', 'competences', 'langues',
+  'experiences', 'formations', 'competences', 'langues', ...ETAT_CIVIL,
 ]
+
+/** Vrai si le profil contient au moins un element d'etat civil. */
+export const aEtatCivil = (profil) => ETAT_CIVIL.some((c) => Boolean(profil?.[c]))
 
 export function profilVersFormulaire(profil = {}) {
   const texte = (v) => (Array.isArray(v) ? v.join(', ') : v || '')
@@ -39,5 +45,6 @@ export function profilVersFormulaire(profil = {}) {
     formations: listeEnTexte(profil.formations, formationEnTexte),
     competences: texte(profil.competences),
     langues: texte(profil.langues),
+    ...Object.fromEntries(ETAT_CIVIL.map((c) => [c, profil[c] === null || profil[c] === undefined ? '' : String(profil[c])])),
   }
 }

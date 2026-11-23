@@ -116,7 +116,8 @@ export default {
           liste: [
             'Compte : prénom, nom, email, mot de passe (conservé uniquement sous forme chiffrée irréversible), langue, dates d’inscription et de dernière connexion, date d’acceptation des conditions, identifiant Google si vous utilisez « Continuer avec Google ».',
             'Profil et CV : coordonnées, expériences, formations, compétences et langues extraites de votre CV ou saisies par vous. Le fichier PDF importé n’est pas conservé : il est lu puis supprimé immédiatement.',
-            'Offres et candidatures : texte et lien des offres, analyses, réponses aux questions, CV et lettres générés.',
+            'Photo et état civil, facultatifs : photo, date et lieu de naissance, nationalité, situation familiale, nombre d’enfants et titre de séjour, seulement si vous les ajoutez à votre profil. La photo est recadrée et réenregistrée à l’envoi : les informations cachées dans le fichier (lieu de prise de vue, appareil) sont effacées.',
+            'Offres et candidatures : texte et lien des offres, analyses, pays visé, réponses aux questions, CV et lettres générés.',
             'Abonnement et paiements : plan, dates, montants, devise et références de paiement. Vos numéros de carte ou de Mobile Money sont saisis chez Stripe ou Flutterwave : nous n’y avons jamais accès.',
             'Consommation : nombre de candidatures générées, d’offres analysées et de CV importés chaque mois.',
             'Données techniques : adresse IP, utilisée pour limiter les abus, et journaux techniques de nos hébergeurs.',
@@ -129,6 +130,7 @@ export default {
           titre: 'Pourquoi nous les traitons',
           liste: [
             'Fournir le service (compte, analyse des offres, génération et export des documents) : exécution du contrat qui nous lie.',
+            'Ajouter votre photo et votre état civil à un CV, dans les pays où c’est l’usage : votre choix, que vous faites à chaque candidature. Vous pouvez les modifier ou les supprimer à tout moment dans votre profil.',
             'Gérer les paiements, la facturation et la comptabilité : exécution du contrat et obligations légales.',
             'Assurer la sécurité et prévenir les abus (confirmation d’email, limites d’utilisation) : notre intérêt légitime à protéger le service et ses utilisateurs.',
             'Vous envoyer les emails liés à votre compte (confirmation, mot de passe, sécurité) : exécution du contrat. Nous ne vous envoyons pas d’emails publicitaires sans votre accord.',
@@ -139,6 +141,7 @@ export default {
           paragraphes: [
             'Pour analyser une offre et rédiger vos documents, le texte de votre profil, de l’offre et de vos réponses est transmis à un fournisseur de modèles d’IA : Google, Groq, OpenRouter, Mistral AI ou Anthropic, selon leur disponibilité.',
             'Ces données servent uniquement à produire le résultat demandé. Nous utilisons des offres dans lesquelles elles ne servent pas à entraîner les modèles de ces fournisseurs.',
+            'La photo et l’état civil de votre profil ne sont jamais transmis à un fournisseur d’IA : ils sont ajoutés directement au PDF par nos serveurs.',
             'Aucune décision produisant des effets juridiques à votre égard n’est prise de façon automatisée : le score de compatibilité est une indication destinée à vous seul.',
           ],
         },
@@ -163,6 +166,7 @@ export default {
           titre: 'Durées de conservation',
           liste: [
             'Compte, profil, offres et candidatures : tant que votre compte existe.',
+            'Photo et état civil : jusqu’à ce que vous les supprimiez de votre profil, ou jusqu’à la suppression du compte. Ils ne sont pas recopiés dans les documents enregistrés : une fois supprimés, ils n’apparaissent plus dans les téléchargements suivants.',
             'Après la suppression du compte : effacement immédiat de notre base de données. Les copies de sauvegarde sont effacées au plus tard à l’expiration de leur durée de rétention chez notre hébergeur de base de données.',
             'Paiements : 10 ans, au titre des obligations comptables, sans lien avec votre identité une fois le compte supprimé.',
             'Liens de confirmation d’email et de réinitialisation du mot de passe : 48 heures et 1 heure.',

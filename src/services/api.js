@@ -86,6 +86,11 @@ export const profilAPI = {
   importCV: (formData) => api.post('/profil/import-cv', formData, {
     headers: { 'Content-Type': 'multipart/form-data' },
   }),
+  photo: () => api.get('/profil/photo', { responseType: 'blob' }),
+  envoyerPhoto: (formData) => api.put('/profil/photo', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  }),
+  supprimerPhoto: () => api.delete('/profil/photo'),
 }
 
 export const offreAPI = {
@@ -104,13 +109,16 @@ export const paysAPI = {
 export const candidatureAPI = {
   create: (offreId) => api.post('/candidature/', { offre_id: offreId }),
   // pays : code d'une fiche pays, « autre », ou null pour le pays detecte dans l'offre
-  generer: (id, reponsesAlignement = [], modeleCv = 'classique', langueDocuments = 'auto', pays = null) =>
+  // avecPhoto, avecEtatCivil : ajoutes au PDF par le serveur, jamais transmis a l'IA
+  generer: (id, { reponses = [], modele = 'classique', langue = 'auto', pays = null, avecPhoto = false, avecEtatCivil = false } = {}) =>
     api.post(`/candidature/${id}/generer`, {
-      modele_cv: modeleCv,
-      langue_documents: langueDocuments,
+      modele_cv: modele,
+      langue_documents: langue,
       ton_lettre: 'professionnel',
-      reponses_alignement: reponsesAlignement,
+      reponses_alignement: reponses,
       pays,
+      avec_photo: avecPhoto,
+      avec_etat_civil: avecEtatCivil,
     }),
   list: () => api.get('/candidature/'),
   baseURL: api.defaults.baseURL,

@@ -14,7 +14,7 @@ export const LEGAL = {
   email: '[Adresse email de contact, ex. support@votre-domaine.com]',
   pays: '[Pays du siège]',
   // Date de la derniere mise a jour des textes (format AAAA-MM-JJ)
-  miseAJour: '2026-11-05',
+  miseAJour: '2026-11-23',
   hebergeurs: [
     { nom: 'Render Services, Inc.', role: { fr: 'site web et API', en: 'website and API' }, coordonnees: '[Adresse et téléphone, voir render.com/legal]' },
     { nom: 'Neon, Inc.', role: { fr: 'base de données', en: 'database' }, coordonnees: '[Adresse et téléphone, voir neon.tech]' },
