@@ -22,6 +22,7 @@ export default function PhotoCV({ aPhoto, onChange }) {
   const fichier = useRef(null)
   const glisse = useRef(null)
   const [apercu, setApercu] = useState('') // photo enregistree
+  const [version, setVersion] = useState(0) // augmente a chaque photo envoyee : l'apercu est relu
   const [image, setImage] = useState(null) // image en cours de recadrage
   const [vue, setVue] = useState({ x: 0, y: 0, zoom: 1 })
   const [busy, setBusy] = useState('')
@@ -44,7 +45,7 @@ export default function PhotoCV({ aPhoto, onChange }) {
       setApercu('')
       if (url) URL.revokeObjectURL(url)
     }
-  }, [aPhoto])
+  }, [aPhoto, version])
 
   useEffect(() => () => image?.close?.(), [image])
 
@@ -106,11 +107,7 @@ export default function PhotoCV({ aPhoto, onChange }) {
       await profilAPI.envoyerPhoto(donnees)
       setImage(null)
       onChange(true)
-      // nouvelle photo a la place d'une ancienne : l'apercu est relu
-      if (aPhoto) {
-        const res = await profilAPI.photo()
-        setApercu(URL.createObjectURL(res.data))
-      }
+      setVersion((v) => v + 1)
     } catch (err) {
       setErreur(errorMessage(err, t, 'profile.photoError'))
     } finally {

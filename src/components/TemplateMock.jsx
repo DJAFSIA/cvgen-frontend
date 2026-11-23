@@ -36,7 +36,7 @@ export default function TemplateMock({ kind }) {
               {bar('75%')}
               {bar('55%')}
             </div>
-            <div className="w-[26%] aspect-[7/9] rounded bg-slate-200 grid place-items-end overflow-hidden">
+            <div className="w-[26%] aspect-[7/9] self-start rounded bg-slate-200 grid place-items-end overflow-hidden">
               <div className="w-full h-full relative">
                 <div className="absolute left-1/2 top-[18%] w-[38%] aspect-square -translate-x-1/2 rounded-full bg-slate-400" />
                 <div className="absolute left-1/2 top-[58%] w-[78%] aspect-square -translate-x-1/2 rounded-full bg-slate-400" />

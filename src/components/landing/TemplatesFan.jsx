@@ -47,15 +47,16 @@ export default function TemplatesFan() {
         })}
       </div>
 
-      <div className="mt-10 md:mt-4 grid sm:grid-cols-2 lg:grid-cols-5 gap-8">
+      {/* Telephone : rangee a faire glisser, la carte suivante depasse pour l'indiquer */}
+      <ul className="mt-10 md:mt-4 -mx-5 px-5 md:mx-0 md:px-0 pb-3 flex md:grid md:grid-cols-3 lg:grid-cols-5 gap-6 md:gap-8 overflow-x-auto md:overflow-visible snap-x snap-mandatory scroll-px-5">
         {MODELES.map((m) => (
-          <div key={m}>
-            <div className="md:hidden max-w-[220px] mb-4"><TemplateMock kind={m} /></div>
+          <li key={m} className="w-[64%] max-w-[240px] shrink-0 snap-start md:w-auto md:max-w-none">
+            <div className="md:hidden mb-4"><TemplateMock kind={m} /></div>
             <h3 className="font-semibold text-ink">{t(`landing.tpl.${m}`)}</h3>
             <p className="mt-1 text-sm leading-relaxed">{t(`landing.tplDesc.${m}`)}</p>
-          </div>
+          </li>
         ))}
-      </div>
+      </ul>
     </section>
   )
 }

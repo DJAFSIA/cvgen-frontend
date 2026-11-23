@@ -29,7 +29,7 @@ export default function ProfilPage() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [importing, setImporting] = useState(false)
-  const [feedback, setFeedback] = useState(null) // { tone, text }
+  const [feedback, setFeedback] = useState(null) // { cle } pour un succes, { err, cle } pour une erreur
   const fileInputRef = useRef(null)
 
   useEffect(() => {
@@ -39,10 +39,10 @@ export default function ProfilPage() {
         setAPhoto(res.data.a_photo)
       })
       .catch((err) => {
-        if (err.response?.status !== 404) setFeedback({ tone: 'error', text: errorMessage(err, t) })
+        if (err.response?.status !== 404) setFeedback({ err })
       })
       .finally(() => setLoading(false))
-  }, [t])
+  }, [])
 
   const pays = useMemo(() => paysTries(lang), [lang])
   const set = (key) => (e) => setProfil({ ...profil, [key]: e.target.value })
@@ -60,9 +60,9 @@ export default function ProfilPage() {
       const res = await profilAPI.importCV(formData)
       // l'import ne lit pas l'etat civil : celui du formulaire est garde
       setProfil((avant) => ({ ...profilVersFormulaire(res.data.data), ...Object.fromEntries(ETAT_CIVIL.map((c) => [c, avant[c]])) }))
-      setFeedback({ tone: 'success', text: t('profile.imported') })
+      setFeedback({ cle: 'profile.imported' })
     } catch (err) {
-      setFeedback({ tone: 'error', text: errorMessage(err, t, 'profile.importError') })
+      setFeedback({ err, cle: 'profile.importError' })
     } finally {
       setImporting(false)
     }
@@ -75,9 +75,9 @@ export default function ProfilPage() {
     try {
       const payload = Object.fromEntries(FIELDS.map((key) => [key, profil[key]]))
       await profilAPI.update(payload)
-      setFeedback({ tone: 'success', text: t('profile.saved') })
+      setFeedback({ cle: 'profile.saved' })
     } catch (err) {
-      setFeedback({ tone: 'error', text: errorMessage(err, t, 'profile.saveError') })
+      setFeedback({ err, cle: 'profile.saveError' })
     } finally {
       setSaving(false)
     }
@@ -100,7 +100,7 @@ export default function ProfilPage() {
         </Button>
       </Card>
 
-      {feedback && <div className="mt-5">{feedback.tone === 'error' ? <ErrorAlert message={feedback.text} /> : <Alert tone={feedback.tone}>{feedback.text}</Alert>}</div>}
+      {feedback && <div className="mt-5">{feedback.err ? <ErrorAlert message={errorMessage(feedback.err, t, feedback.cle)} /> : <Alert tone="success">{t(feedback.cle)}</Alert>}</div>}
 
       <form onSubmit={handleSave} className="mt-6 space-y-5">
         <Card className="p-6">

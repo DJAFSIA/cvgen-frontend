@@ -1,6 +1,9 @@
 export default {
   common: {
     brand: 'Apply',
+    pageTitle: 'Apply - Tailored CVs and cover letters',
+    pageDescription: 'Apply writes a tailored CV and cover letter for every job offer, in the language of the offer.',
+    language: 'Language',
     login: 'Log in',
     signup: 'Get started',
     logout: 'Log out',
@@ -15,6 +18,7 @@ export default {
     tooMany: 'Too many requests. Please wait a moment and try again.',
   },
   nav: {
+    main: 'Main menu',
     account: "My account",
     legal: "Legal information",
     billing: "Subscription",
@@ -192,6 +196,7 @@ export default {
     children: 'Number of children',
   },
   apply: {
+    progress: 'Steps',
     title: 'New application',
     subtitle: 'Analyse the offer, add the proof your CV is missing, then generate your documents.',
     steps: ['Job offer', 'Analysis', 'Documents'],
@@ -222,7 +227,7 @@ export default {
     countryOther: 'Other country (international format)',
     countryOfficial: 'Customs taken from official sources',
     countryUsage: 'Common practice, taken from recruitment guides',
-    countrySources: 'Sources',
+    countrySources: 'Sources:',
     countryChecked: 'checked on {date}',
     recommended: 'Recommended',
     photoDiscouraged: 'In this country, a CV carries no photo or personal details: the matching template is not offered.',

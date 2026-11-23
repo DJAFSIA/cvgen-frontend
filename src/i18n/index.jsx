@@ -24,6 +24,8 @@ export function I18nProvider({ children }) {
 
   useEffect(() => {
     document.documentElement.lang = lang
+    document.title = dictionaries[lang].common.pageTitle
+    document.querySelector('meta[name="description"]')?.setAttribute('content', dictionaries[lang].common.pageDescription)
   }, [lang])
 
   const setLang = useCallback((next) => {

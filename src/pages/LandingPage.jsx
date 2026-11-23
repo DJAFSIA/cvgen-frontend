@@ -45,7 +45,7 @@ export default function LandingPage() {
       <header className="sticky top-0 z-30 bg-white/75 backdrop-blur-xl backdrop-saturate-150 border-b border-black/[.06] relative">
         <div className="max-w-5xl mx-auto px-5 h-12 flex items-center justify-between">
           <Logo />
-          <nav className="hidden md:flex items-center gap-8 text-[13px] text-ink/80" aria-label="Main">
+          <nav className="hidden md:flex items-center gap-8 text-[13px] text-ink/80" aria-label={t('nav.main')}>
             <a href="#how" className="hover:text-ink">{t('nav.howItWorks')}</a>
             <a href="#features" className="hover:text-ink">{t('nav.features')}</a>
             <a href="#templates" className="hover:text-ink">{t('nav.templates')}</a>

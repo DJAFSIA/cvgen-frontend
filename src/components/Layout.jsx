@@ -73,7 +73,7 @@ export default function Layout({ children }) {
             </button>
           </div>
         </div>
-        <nav className="md:hidden border-t border-line px-3 py-2 flex gap-1 overflow-x-auto" aria-label="Main">
+        <nav className="md:hidden border-t border-line px-3 py-2 flex gap-1 overflow-x-auto" aria-label={t('nav.main')}>
           {navItems.map((item) => {
             const Icon = item.Icon
             return <NavLink key={item.path} to={item.path} className={linkClass}><Icon size={16} aria-hidden="true" />{t(item.key)}</NavLink>
@@ -82,7 +82,7 @@ export default function Layout({ children }) {
       </header>
 
       <div className="flex flex-1">
-        <aside className="hidden md:flex w-60 shrink-0 bg-white border-r border-line p-4 flex-col gap-1" aria-label="Main">
+        <aside className="hidden md:flex w-60 shrink-0 bg-white border-r border-line p-4 flex-col gap-1" aria-label={t('nav.main')}>
           {navItems.map((item) => {
             const Icon = item.Icon
             return <NavLink key={item.path} to={item.path} className={linkClass}><Icon size={17} aria-hidden="true" />{t(item.key)}</NavLink>

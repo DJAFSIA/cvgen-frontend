@@ -11,9 +11,9 @@ export function Logo({ to = '/', dark = false }) {
 }
 
 export function LangSwitch() {
-  const { lang, setLang } = useI18n()
+  const { lang, setLang, t } = useI18n()
   return (
-    <div className="inline-flex rounded-md border border-line bg-white p-0.5 text-xs font-semibold" role="group" aria-label="Language">
+    <div className="inline-flex rounded-md border border-line bg-white p-0.5 text-xs font-semibold" role="group" aria-label={t('common.language')}>
       {['en', 'fr'].map((code) => (
         <button
           key={code}

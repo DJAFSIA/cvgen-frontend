@@ -1,6 +1,9 @@
 export default {
   common: {
     brand: 'Apply',
+    pageTitle: 'Apply - CV et lettres adaptés à chaque offre',
+    pageDescription: "Apply rédige un CV et une lettre de motivation adaptés à chaque offre d'emploi, dans la langue de l'offre.",
+    language: 'Langue',
     login: 'Se connecter',
     signup: 'Commencer',
     logout: 'Déconnexion',
@@ -15,6 +18,7 @@ export default {
     tooMany: 'Trop de requêtes. Patientez un instant puis réessayez.',
   },
   nav: {
+    main: 'Menu principal',
     account: "Mon compte",
     legal: "Informations légales",
     billing: "Abonnement",
@@ -192,6 +196,7 @@ export default {
     children: "Nombre d'enfants",
   },
   apply: {
+    progress: 'Étapes',
     title: 'Nouvelle candidature',
     subtitle: 'Analysez l\'offre, ajoutez les preuves qui manquent à votre CV, puis générez vos documents.',
     steps: ['Offre', 'Analyse', 'Documents'],
@@ -222,8 +227,8 @@ export default {
     countryOther: 'Autre pays (format international)',
     countryOfficial: 'Usages tirés de sources officielles',
     countryUsage: 'Usages courants, tirés de guides de recrutement',
-    countrySources: 'Sources',
-    countryChecked: 'vérifié le {date}',
+    countrySources: 'Sources :',
+    countryChecked: 'vérifiés le {date}',
     recommended: 'Recommandé',
     photoDiscouraged: "Dans ce pays, un CV ne porte ni photo ni état civil : le modèle correspondant n'est pas proposé.",
     personalTitle: 'À ajouter sur le CV',

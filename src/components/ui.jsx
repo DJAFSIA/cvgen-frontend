@@ -11,14 +11,14 @@ const buttonStyles = {
 const buttonSizes = {
   sm: 'h-8 px-4 text-[13px]',
   md: 'h-10 px-5 text-sm',
-  lg: 'h-12 px-7 text-[17px]',
+  lg: 'h-12 px-5 sm:px-7 text-base sm:text-[17px]',
 }
 
 export function Button({ variant = 'primary', size = 'md', loading = false, className = '', children, disabled, ...props }) {
   return (
     <button
       disabled={disabled || loading}
-      className={`inline-flex items-center justify-center gap-2 rounded-full font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap ${buttonStyles[variant]} ${buttonSizes[size]} ${className}`}
+      className={`inline-flex items-center justify-center gap-2 rounded-full font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap [&>svg]:shrink-0 ${buttonStyles[variant]} ${buttonSizes[size]} ${className}`}
       {...props}
     >
       {loading && <Loader2 size={16} className="animate-spin" aria-hidden="true" />}

@@ -15,11 +15,13 @@ const MIN_CHARS = 30
 
 // Fiches pays du serveur ; liste vide si elles ne sont pas disponibles (le pays detecte s'applique alors)
 const lirePays = () => paysAPI.list().then((res) => res.data).catch(() => [])
+const site = (url) => new URL(url).hostname.replace(/^www\./, '')
 const lireProfil = () => profilAPI.get().then((res) => res.data).catch(() => null)
 
 function Stepper({ current, labels }) {
+  const { t } = useI18n()
   return (
-    <ol className="flex items-center gap-2 text-sm" aria-label="Progress">
+    <ol className="flex items-center gap-2 text-sm" aria-label={t('apply.progress')}>
       {labels.map((label, i) => {
         const done = i < current
         const active = i === current
@@ -94,6 +96,7 @@ export default function NouvelleCandidature() {
   const [analyse, setAnalyse] = useState(null)
   const [alignement, setAlignement] = useState(null)
   const [reponses, setReponses] = useState({})
+  const [candidatureId, setCandidatureId] = useState(null) // reprise apres un echec, sans doublon dans l'historique
   const [resultat, setResultat] = useState(null)
   const [busy, setBusy] = useState('') // extract | analyse | questions | generate | pdf
   const [error, setError] = useState('')
@@ -117,10 +120,10 @@ export default function NouvelleCandidature() {
   )
   const fichePays = listePays.find((p) => p.code === pays)
 
-  // Modeles proposes : celui avec photo et etat civil n'est pas montre la ou il est deconseille
+  // Modeles proposes : le recommande en premier ; celui avec photo et etat civil n'est pas montre la ou il est deconseille
   const deconseille = fichePays?.photo === 'deconseillee'
-  const modeles = MODELES.filter((m) => m !== 'etat_civil' || !deconseille)
   const recommande = fichePays?.modele_recommande
+  const modeles = MODELES.filter((m) => m !== 'etat_civil' || !deconseille).sort((a, b) => (b === recommande) - (a === recommande))
   const modele = modeles.includes(modeleChoisi) ? modeleChoisi : recommande || 'classique'
 
   // Cases « photo » et « etat civil » : cochees d'avance seulement si c'est l'usage attendu dans ce pays
@@ -153,6 +156,7 @@ export default function NouvelleCandidature() {
       // l'analyse et les questions sont redigees dans la langue de l'interface
       const res = await offreAPI.soumettre({ url_source: url.trim() || null, contenu_brut: contenu, langue: lang })
       setAnalyse(res.data)
+      setCandidatureId(null)
       setPays(res.data.pays || 'autre')
       setChoixPersonnels({})
       if (listePays.length === 0) lirePays().then(setListePays) // nouvel essai si le premier chargement a echoue
@@ -173,8 +177,8 @@ export default function NouvelleCandidature() {
       const payload = questions
         .map((q) => ({ id: q.id, theme: q.theme, question: q.question, reponse: reponses[q.id]?.trim() || '' }))
         .filter((item) => item.reponse)
-      const created = await candidatureAPI.create(analyse.id)
-      const id = created.data.id
+      const id = candidatureId || (await candidatureAPI.create(analyse.id)).data.id
+      setCandidatureId(id)
       const gen = await candidatureAPI.generer(id, { reponses: payload, modele, langue: langueDocs, pays, avecPhoto, avecEtatCivil })
       setResultat({ id, cv: gen.data.cv, lettre: gen.data.lettre, affichage: gen.data.affichage })
     } catch (err) {
@@ -198,7 +202,7 @@ export default function NouvelleCandidature() {
 
   const recommencer = () => {
     setUrl(''); setContenu(''); setAnalyse(null); setAlignement(null); setPays('autre'); setModeleChoisi(null); setChoixPersonnels({})
-    setReponses({}); setResultat(null); setError('')
+    setReponses({}); setResultat(null); setCandidatureId(null); setError('')
   }
 
   return (
@@ -322,12 +326,13 @@ export default function NouvelleCandidature() {
                           {', '}
                           {t('apply.countryChecked', { date: new Intl.DateTimeFormat(lang, { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(fichePays.verifie_le)) })}
                           {'. '}
-                          {t('apply.countrySources')}{' : '}
+                          {t('apply.countrySources')}{' '}
                           {fichePays.sources.map((source, i) => (
                             <span key={source.url}>
                               {i > 0 && ' · '}
                               <a href={source.url} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-ink" title={source.titre}>
-                                {new URL(source.url).hostname.replace(/^www\./, '')}
+                                {site(source.url)}
+                                {fichePays.sources.findIndex((s) => site(s.url) === site(source.url)) < i && ` (${fichePays.sources.slice(0, i + 1).filter((s) => site(s.url) === site(source.url)).length})`}
                               </a>
                             </span>
                           ))}
@@ -339,12 +344,12 @@ export default function NouvelleCandidature() {
 
                 <fieldset>
                   <legend className="text-[13px] font-medium text-ink mb-3">{t('apply.chooseTemplate')}</legend>
-                  <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+                  <div className="grid grid-cols-3 sm:grid-cols-5 gap-2 sm:gap-3">
                     {modeles.map((m) => (
                       <label key={m} className={`cursor-pointer rounded-xl2 border p-2 transition has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-brand ${modele === m ? 'border-brand ring-2 ring-brand/25 bg-brand-soft/40' : 'border-line hover:border-slate-300'}`}>
                         <input type="radio" name="modele" value={m} checked={modele === m} onChange={() => setModeleChoisi(m)} className="sr-only" />
                         <TemplateMock kind={m} />
-                        <span className="block mt-2 text-center text-[13px] leading-tight font-medium text-ink">{t(`landing.tpl.${m}`)}</span>
+                        <span className="block mt-2 text-center text-[12px] sm:text-[13px] leading-tight font-medium text-ink">{t(`landing.tpl.${m}`)}</span>
                         {m === recommande && <span className="block mt-1 text-center text-[11px] font-semibold text-brand">{t('apply.recommended')}</span>}
                       </label>
                     ))}
@@ -367,7 +372,11 @@ export default function NouvelleCandidature() {
                         />
                         <span>
                           {c.texte}
-                          {!c.possible && <> {c.manque} <a href="/profil" target="_blank" rel="noopener" className="text-brand underline underline-offset-2">{t('apply.openProfile')}</a></>}
+                          {!c.possible && (
+                            <span className="block text-xs mt-0.5">
+                              {c.manque} <a href="/profil" target="_blank" rel="noopener" className="text-brand underline underline-offset-2">{t('apply.openProfile')}</a>
+                            </span>
+                          )}
                         </span>
                       </label>
                     ))}
