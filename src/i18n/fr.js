@@ -66,7 +66,7 @@ export default {
       classique: 'Sobre et traditionnel. Un choix sûr pour la plupart des candidatures européennes.',
       moderne: 'Un en-tête affirmé et des pastilles de compétences pour les employeurs sensibles au design.',
       ats: 'Une structure en texte simple que les logiciels de tri lisent sans erreur.',
-      nord_americain: 'Le resume attendu au Canada et aux États-Unis : compétences en tête, sans photo, format Letter.',
+      nord_americain: 'Le CV attendu au Canada et aux États-Unis : compétences en tête, sans photo, format Letter.',
       etat_civil: 'Pour les pays où le CV montre une photo et l’état civil. Vous choisissez ce qui apparaît.',
     },
     ctaTitle: 'Votre prochaine candidature commence ici',
